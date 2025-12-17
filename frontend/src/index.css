@@ -1,0 +1,256 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Apple-inspired Design System - macOS Tahoe Aesthetic */
+
+@layer base {
+  :root {
+    /* Core backgrounds */
+    --background: 220 20% 97%;
+    --foreground: 220 25% 10%;
+
+    /* Glass surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 10%;
+    --glass: 0 0% 100%;
+    --glass-border: 220 20% 92%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 10%;
+
+    /* Primary - Apple Blue */
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 211 100% 60%;
+
+    /* Secondary - Soft gray */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 25% 25%;
+
+    /* Muted */
+    --muted: 220 14% 95%;
+    --muted-foreground: 220 10% 46%;
+
+    /* Accent */
+    --accent: 220 14% 94%;
+    --accent-foreground: 220 25% 15%;
+
+    /* Category Colors */
+    --mobile: 211 100% 50%;
+    --mobile-light: 211 100% 95%;
+    --clothing: 280 70% 55%;
+    --clothing-light: 280 70% 95%;
+    --flights: 24 100% 55%;
+    --flights-light: 24 100% 95%;
+
+    /* Status Colors */
+    --success: 142 72% 45%;
+    --success-light: 142 72% 94%;
+    --warning: 38 92% 50%;
+    --warning-light: 38 92% 94%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & inputs */
+    --border: 220 20% 90%;
+    --input: 220 20% 90%;
+    --ring: 211 100% 50%;
+
+    --radius: 1rem;
+
+    /* Sidebar - Translucent */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 25% 25%;
+    --sidebar-primary: 211 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 25% 15%;
+    --sidebar-border: 220 20% 92%;
+    --sidebar-ring: 211 100% 50%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(211 100% 97%) 0%, hsl(280 70% 97%) 50%, hsl(24 100% 97%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(211 100% 50%) 0%, hsl(211 100% 60%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(0, 0%, 100%, 0.9) 0%, hsla(0, 0%, 100%, 0.7) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px hsla(220, 25%, 10%, 0.04);
+    --shadow-md: 0 4px 12px hsla(220, 25%, 10%, 0.08);
+    --shadow-lg: 0 8px 30px hsla(220, 25%, 10%, 0.12);
+    --shadow-glow: 0 0 40px hsla(211, 100%, 50%, 0.15);
+  }
+
+  .dark {
+    --background: 220 25% 8%;
+    --foreground: 220 14% 96%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 220 14% 96%;
+    --glass: 220 25% 14%;
+    --glass-border: 220 25% 20%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 220 14% 96%;
+
+    --primary: 211 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 211 100% 65%;
+
+    --secondary: 220 25% 18%;
+    --secondary-foreground: 220 14% 90%;
+
+    --muted: 220 25% 18%;
+    --muted-foreground: 220 14% 60%;
+
+    --accent: 220 25% 20%;
+    --accent-foreground: 220 14% 96%;
+
+    --mobile-light: 211 100% 15%;
+    --clothing-light: 280 70% 15%;
+    --flights-light: 24 100% 15%;
+
+    --success-light: 142 72% 15%;
+    --warning-light: 38 92% 15%;
+
+    --border: 220 25% 20%;
+    --input: 220 25% 20%;
+    --ring: 211 100% 55%;
+
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 220 14% 90%;
+    --sidebar-primary: 211 100% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 25% 18%;
+    --sidebar-accent-foreground: 220 14% 96%;
+    --sidebar-border: 220 25% 18%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(220 25% 8%) 0%, hsl(280 30% 12%) 50%, hsl(24 30% 10%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(220, 25%, 18%, 0.9) 0%, hsla(220, 25%, 14%, 0.7) 100%);
+
+    --shadow-sm: 0 1px 2px hsla(0, 0%, 0%, 0.2);
+    --shadow-md: 0 4px 12px hsla(0, 0%, 0%, 0.3);
+    --shadow-lg: 0 8px 30px hsla(0, 0%, 0%, 0.4);
+    --shadow-glow: 0 0 40px hsla(211, 100%, 55%, 0.2);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Apple-like system font stack */
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Arial", sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Glass morphism */
+  .glass {
+    @apply bg-glass/80 backdrop-blur-xl border border-glass-border;
+  }
+
+  .glass-strong {
+    @apply bg-glass/90 backdrop-blur-2xl border border-glass-border;
+  }
+
+  .glass-subtle {
+    @apply bg-glass/60 backdrop-blur-lg border border-glass-border/50;
+  }
+
+  /* Shadows */
+  .shadow-glass {
+    box-shadow: var(--shadow-lg), inset 0 1px 0 hsla(0, 0%, 100%, 0.1);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  /* Animated gradient background */
+  .gradient-hero {
+    background: var(--gradient-hero);
+    background-size: 200% 200%;
+    animation: gradient-shift 15s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Hover elevation */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Float animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .float-delayed {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  .float-delayed-2 {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 4s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  /* Pulse for new alerts */
+  .pulse-dot {
+    @apply relative;
+  }
+
+  .pulse-dot::after {
+    content: '';
+    @apply absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full;
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+
+  /* Skeleton shimmer */
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted)) 0%, 
+      hsl(var(--muted-foreground) / 0.1) 50%, 
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}
