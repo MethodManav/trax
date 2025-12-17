@@ -1,23 +1,18 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITrigger extends Document {
-  name: string;
   eventType: "mobile" | "flight";
   isActive: boolean;
   config: Record<string, unknown>;
   expectedPrice: number;
   timeDuration: number;
-  nextCheck: number;
+  nextCheck: Date;
   createdAt: Date;
   updatedAt: Date;
 }
+export interface ITriggerDoc extends ITrigger, Document {}
 
 const TriggerSchema = new Schema<ITrigger>({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
   eventType: {
     type: String,
     required: true,
@@ -42,8 +37,8 @@ const TriggerSchema = new Schema<ITrigger>({
     default: 0,
   },
   nextCheck: {
-    type: Number,
-    default: 0,
+    type: Date,
+    default: Date.now,
   },
 });
 
