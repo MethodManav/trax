@@ -1,4 +1,3 @@
-
 import { z, ZodError } from "zod";
 import { authService } from "../../services/auth-service/index";
 import { ApiRouteConfig, Handlers } from "motia";
@@ -17,21 +16,32 @@ export const config: ApiRouteConfig = {
   ],
 };
 
-
 export const handler: Handlers["Signup User"] = async (req, { logger }) => {
-  logger.info("Signing up user", { body: req.body });
-  const validatedData = signUpUserBodySchema.safeParse(req.body);
-  if (!validatedData.success) {
-    logger.error("Validation failed", { errors: validatedData.error });
-    throw new Error("Invalid request data");
+  try {
+    logger.info("Signing up user", { body: req.body });
+    const validatedData = signUpUserBodySchema.safeParse(req.body);
+    if (!validatedData.success) {
+      logger.error("Validation failed", { errors: validatedData.error });
+      throw new Error("Invalid request data");
+    }
+    const user = await authService.signUpUser(validatedData.data);
+    return {
+      status: 200,
+      body: {
+        token: user.token,
+        userId: user.userId,
+      },
+    };
+  } catch (error) {
+    logger.error("Error signing up user", { error });
+    if (error instanceof Error) {
+      return {
+        status: 500,
+        body: { error: error.message || "Internal server error" },
+      };
+    }
   }
-  const user = await authService.signUpUser(validatedData.data);
-  return {
-    token: user.token,
-    userId: user.userId,
-  };
 };
-
 
 const signUpUserBodySchema = z.object({
   email: z.string().email(),

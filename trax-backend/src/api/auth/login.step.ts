@@ -1,7 +1,6 @@
-
 import { z, ZodError } from "zod";
 import { authService } from "../../services/auth-service/index";
-import { ApiRouteConfig , Handlers} from "motia";
+import { ApiRouteConfig, Handlers } from "motia";
 export const config: ApiRouteConfig = {
   name: "Login User",
   type: "api",
@@ -15,7 +14,6 @@ export const config: ApiRouteConfig = {
     "../../repositories/auth-dto.ts",
   ],
 };
-
 
 export const handler: Handlers["Login User"] = async (req, { logger }) => {
   try {
@@ -34,19 +32,14 @@ export const handler: Handlers["Login User"] = async (req, { logger }) => {
     };
   } catch (error) {
     logger.error("Error logging in user", { error });
-    if (error instanceof ZodError) {
+    if (error instanceof Error) {
       return {
-        status: 400,
-        body: { error: "Invalid request data" },
+        status: 500,
+        body: { error: error.message || "Internal server error" },
       };
     }
-    return {
-      status: 500,
-      body: { error: "Internal server error" },
-    };
   }
 };
-
 
 const loginUserBodySchema = z.object({
   email: z.string().email(),
