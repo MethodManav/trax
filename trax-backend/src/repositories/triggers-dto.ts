@@ -1,17 +1,20 @@
-
-import { ITriggerDoc, TriggerModel, type ITrigger } from "../model/trigger.model";
+import {
+  ITriggerDoc,
+  TriggerModel,
+  type ITrigger,
+} from "../model/trigger.model";
+import { connectDatabase, disconnectDatabase } from "../utils/database";
 
 export const triggerRepository = {
-  async create(data: ITrigger): Promise<ITriggerDoc> {
-    const trigger = new TriggerModel({
-      eventType: data.eventType,
-      isActive: data.isActive ?? true,
-      config: data.config || {},
-    });
-
-    const savedTrigger = await trigger.save();
-    return savedTrigger as ITriggerDoc;
+  async createTriggerData(data: ITrigger): Promise<ITriggerDoc> {
+    try {
+      await connectDatabase();
+      const trigger = await TriggerModel.create(data);
+      return trigger;
+    } catch (error) {
+      throw new Error("Error creating trigger in repository");
+    } finally {
+      disconnectDatabase();
+    }
   },
 };
-
-  

@@ -1,10 +1,28 @@
-import type { ApiRouteConfig, Handlers } from "motia";
+import type { ApiMiddleware, ApiRouteConfig, Handlers } from "motia";
 import { z } from "zod";
-import { ZodError } from "zod";
 import { triggerService } from "../../services/triggers/index";
-import { ITriggerDoc } from "src/model/trigger.model";
+import { ITriggerDoc } from "../../model/trigger.model";
+import { authRepository } from "../../repositories/auth-dto";
 
-const createMobileTriggerBodySchema =z.object({
+//token authentication middleware
+const authenticateToken: ApiMiddleware = async (req, ctx, next) => {
+  const authHeader = req.headers["x-auth-token"];
+  console.log("Auth Header:", authHeader);
+  if (!authHeader || typeof authHeader !== "string") {
+    return { status: 401, body: { message: "No token provided" } };
+  }
+  try {
+    const decoded = await authRepository.verifyToken(authHeader);
+    console.info("Token verified:", decoded);
+    // @ts-ignore
+    req.userId = decoded.userId;
+    return await next();
+  } catch (error) {
+    return { status: 401, body: { message: "Invalid token" } };
+  }
+};
+
+const createMobileTriggerBodySchema = z.object({
   eventType: z.literal("mobile"),
   config: z.object({
     brandName: z.string().min(1, "Name is required"),
@@ -13,23 +31,13 @@ const createMobileTriggerBodySchema =z.object({
     rom: z.number().min(1024, "ROM must be at least 1GB"),
   }),
   expectedPrice: z.number().min(0, "Expected price must be non-negative"),
-  trackTiming: z.string().min(1, "Track timing is required"),
+  timeDuration: z.string().min(1, "Track timing is required"),
 });
-
-// const createFlightTriggerBodySchema = z.object({
-//   eventType: z.literal("flight"),
- 
-//   config: z.record(z.string(), z.unknown()).optional().default({}),
-//   isActive: z.boolean().optional().default(true),
-// });
 
 export type CreateMobileTriggerBody = z.infer<
   typeof createMobileTriggerBodySchema
 >;
-// export type CreateFlightTriggerBody = z.infer<
-//   typeof createFlightTriggerBodySchema
-// >;
-export type CreateTrigger = CreateMobileTriggerBody ;
+export type CreateTrigger = CreateMobileTriggerBody;
 
 export const config: ApiRouteConfig = {
   name: "CreateTrigger",
@@ -39,76 +47,37 @@ export const config: ApiRouteConfig = {
   description: "Create a new trigger",
   emits: [],
   flows: ["trigger-management"],
+  middleware: [authenticateToken],
   includeFiles: [
     "../../services/triggers/index.ts",
     "../../repositories/triggers/index.ts",
   ],
-  responseSchema: {
-    201: z.object({
-      id: z.string(),
-      eventType: z.string(),
-      isActive: z.boolean(),
-      config: z.record(z.string(), z.unknown()),
-      createdAt: z.string(),
-      updatedAt: z.string(),
-    }),
-    400: z.object({
-      error: z.string(),
-    }),
-    500: z.object({
-      error: z.string(),
-    }),
-  },
 };
 
 export const handler: Handlers["CreateTrigger"] = async (req, { logger }) => {
   try {
-    logger.info("Creating new trigger", { body: req.body });
-    let trigger:ITriggerDoc;
-    switch (req.body.eventType) {
-      case "mobile":
-        const mobileValidatedData = createMobileTriggerBodySchema.safeParse(req.body);
-        if (!mobileValidatedData.success) {
-          throw new ZodError(mobileValidatedData.error.errors);
-        }
-         trigger = await triggerService.CreateTrigger(mobileValidatedData.data);
-        break;
-        // case "flight":
-        //   const flightValidatedData = createFlightTriggerBodySchema.safeParse(req.body);
-        //   if (!flightValidatedData.success) {
-        //     throw new ZodError(flightValidatedData.error.errors);
-        //   }
-        // trigger = await triggerService.CreateTrigger(flightValidatedData.data);
-        // break;
-      default:
-        logger.warn("Unknown event type", { eventType: req.body.eventType });
-        throw new Error("Unsupported event type");
+    const parsedBody = createMobileTriggerBodySchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      throw new Error("Validation failed: " + parsedBody.error.message);
     }
-
-    logger.info("Trigger created successfully", { triggerId: trigger });
-
+    // @ts-ignore
+    req.body.userId = req.userId;
+    console.log("Request Body with UserID:", req.body);
+    const newTrigger: ITriggerDoc = await triggerService.CreateTrigger(
+      req.body as any
+    );
+    logger.info("Trigger created successfully", { triggerId: newTrigger._id });
     return {
       status: 201,
-      body: trigger,
+      body: newTrigger,
     };
   } catch (error) {
-    if (error instanceof ZodError) {
-      logger.warn("Validation error creating trigger", { error: error.errors });
+    logger.error("Error creating trigger", { error });
+    if (error instanceof Error) {
       return {
         status: 400,
-        body: { error: "Validation failed", details: error.errors },
+        body: { message: error.message },
       };
     }
-
-    logger.error("Failed to create trigger", {
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return {
-      status: 500,
-      body: {
-        error:
-          error instanceof Error ? error.message : "Failed to create trigger",
-      },
-    };
   }
 };

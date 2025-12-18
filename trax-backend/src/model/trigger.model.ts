@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface ITrigger extends Document {
+  userId: Types.ObjectId;
   eventType: "mobile" | "flight";
   isActive: boolean;
   config: Record<string, unknown>;
@@ -13,6 +14,12 @@ export interface ITrigger extends Document {
 export interface ITriggerDoc extends ITrigger, Document {}
 
 const TriggerSchema = new Schema<ITrigger>({
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+    index: true,
+  },
   eventType: {
     type: String,
     required: true,
@@ -38,7 +45,9 @@ const TriggerSchema = new Schema<ITrigger>({
   },
   nextCheck: {
     type: Date,
-    default: Date.now,
+    default: function (this: ITrigger) {
+      return new Date(Date.now() + this.timeDuration);
+    },
   },
 });
 
