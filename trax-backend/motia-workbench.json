@@ -12,5 +12,14 @@
         "sourceHandlePosition": "right"
       }
     }
+  },
+  {
+    "id": "trigger-management",
+    "config": {
+      "src/api/triggers/create-trigger.step.ts": {
+        "x": 0,
+        "y": 0
+      }
+    }
   }
 ]

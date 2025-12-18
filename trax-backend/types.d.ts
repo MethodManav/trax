@@ -12,10 +12,9 @@ declare module 'motia' {
   }
 
   interface Handlers {
-    'UpdateTrigger': ApiRouteHandler<{ name?: string; description?: string; eventType?: string; isActive?: boolean; config?: Record<string, unknown> }, ApiResponse<200, { id: string; name: string; description?: string; eventType: string; isActive: boolean; config: Record<string, unknown>; createdAt: string; updatedAt: string }> | ApiResponse<400, { error: string }> | ApiResponse<404, { error: string }> | ApiResponse<500, { error: string }>, never>
-    'GetTriggers': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { triggers: Array<{ id: string; name: string; description?: string; eventType: string; isActive: boolean; config: Record<string, unknown>; createdAt: string; updatedAt: string }>; count: number }> | ApiResponse<500, { error: string }>, never>
-    'GetTrigger': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { id: string; name: string; description?: string; eventType: string; isActive: boolean; config: Record<string, unknown>; createdAt: string; updatedAt: string }> | ApiResponse<404, { error: string }> | ApiResponse<500, { error: string }>, never>
-    'DeleteTrigger': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { message: string; id: string }> | ApiResponse<404, { error: string }> | ApiResponse<500, { error: string }>, never>
+    'CreateTrigger': ApiRouteHandler<Record<string, unknown>, ApiResponse<201, { id: string; eventType: string; isActive: boolean; config: Record<string, unknown>; createdAt: string; updatedAt: string }> | ApiResponse<400, { error: string }> | ApiResponse<500, { error: string }>, never>
+    'Signup User': ApiRouteHandler<Record<string, unknown>, unknown, never>
+    'Login User': ApiRouteHandler<Record<string, unknown>, unknown, never>
   }
     
 }

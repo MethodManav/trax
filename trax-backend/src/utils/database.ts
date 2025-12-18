@@ -6,7 +6,7 @@ export async function connectDatabase(): Promise<void> {
   if (isConnected) {
     return;
   }
-  const mongoUri = "mongodb+srv://pulsar:OpLAIa9sV7F3PzrY@cluster0.mojbb3o.mongodb.net/"
+  const mongoUri = EnvParser.DB_URL;  
   console.log("Connecting to MongoDB at:", mongoUri);
 
   try {
