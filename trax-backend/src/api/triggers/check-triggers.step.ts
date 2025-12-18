@@ -3,7 +3,7 @@ import { triggerRepository } from "../../repositories/triggers-dto";
 export const config: CronConfig = {
   name: "CheckTriggers",
   type: "cron",
-  cron: "*/10 * * * *", // Run every 10 minutes
+  cron: "*/2 * * * *", // Run every 2 minutes
   description: "Check triggers ready for processing and push them to queue",
   emits: ["trigger-ready"],
   flows: ["trigger-management"],
@@ -22,28 +22,17 @@ export const handler: Handlers["CheckTriggers"] = async ({ logger, emit }) => {
     }
     logger.info(`Found ${triggers.length} triggers ready for processing`);
 
-    for (const trigger of triggers) {
-      const triggerData = {
-        triggerId: trigger._id.toString(),
-        nextCheck: trigger.nextCheck.toISOString(),
-      };
-
-      await Promise.all(
-        triggers.map((trigger) =>
-          emit({
-            topic: "trigger-ready",
-            data: {
-              triggerId: trigger._id.toString(),
-              nextCheck: trigger.nextCheck.toISOString(),
-            },
-          })
-        )
-      );
-
-      logger.info("Emitted trigger to queue", {
-        triggerId: trigger._id.toString(),
-      });
-    }
+    await Promise.all(
+      triggers.map((trigger) =>
+        emit({
+          topic: "trigger-ready",
+          data: {
+            triggerId: trigger._id.toString(),
+            nextCheck: trigger.nextCheck.toISOString(),
+          },
+        })
+      )
+    );
 
     logger.info("Completed trigger check cron job", {
       processedCount: triggers.length,

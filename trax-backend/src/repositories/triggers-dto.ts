@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import {
   ITriggerDoc,
   TriggerModel,
@@ -32,7 +33,9 @@ export const triggerRepository = {
       disconnectDatabase();
     }
   },
-  async fetchTriggerById(triggerId: string): Promise<ITriggerDoc | null> {
+  async fetchTriggerById(
+    triggerId: Types.ObjectId
+  ): Promise<ITriggerDoc | null> {
     try {
       await connectDatabase();
       const trigger = await TriggerModel.findById(triggerId).exec();

@@ -1,6 +1,7 @@
 import type { EventConfig, Handlers } from "motia";
 import { triggerRepository } from "../repositories/triggers-dto";
 import { googleChat } from "../repositories/google-dto";
+import { enqueue } from "../repositories/job-dto";
 
 export const config: EventConfig = {
   name: "ProcessTrigger",
@@ -16,33 +17,8 @@ export const handler: Handlers["ProcessTrigger"] = async (
   { logger }
 ) => {
   try {
-    logger.info("Trigger processed successfully", {
-      triggerId: input.triggerId,
-    });
-    const fetchTriggerData = await triggerRepository.fetchTriggerById(
-      input.triggerId
-    );
-    if (!fetchTriggerData) {
-      logger.warn("No trigger found with the given ID", {
-        triggerId: input.triggerId,
-      });
-      return;
-    }
-    const fetchPriceFromGoogle = await googleChat(
-      fetchTriggerData.config as any
-    );
-    console.log("Fetched Price from Google:", fetchPriceFromGoogle);
-    // const addTrackerData= await triggerRepository.createTriggerData({
-    //   triggerId: fetchTriggerData._id,
-    //   userId: fetchTriggerData.userId,
-    //   currentPrice: [
-    //     {
-    //       site: fetchPriceFromGoogle.,
-    //       price: fetchPriceFromGoogle,
-    //     },
-    //   ],
-    //   targetPrice: fetchTriggerData.targetPrice,
-    // });
+    logger.info("Processing trigger", { triggerId: input.triggerId });
+    await enqueue(input.triggerId);
   } catch (error) {
     logger.error("Error processing trigger", {
       error,
