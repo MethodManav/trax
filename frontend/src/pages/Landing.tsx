@@ -1,36 +1,56 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Smartphone, Shirt, Plane, TrendingDown, Bell, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Smartphone,
+  Shirt,
+  Plane,
+  TrendingDown,
+  Bell,
+  Zap,
+} from "lucide-react";
 
 const categories = [
-  { 
-    icon: Smartphone, 
-    label: "Mobiles", 
+  {
+    icon: Smartphone,
+    label: "Mobiles",
     description: "Track smartphone prices",
     color: "bg-mobile/10 text-mobile",
-    delay: 0.2 
+    delay: 0.2,
   },
-  { 
-    icon: Shirt, 
-    label: "Clothing", 
+  {
+    icon: Shirt,
+    label: "Clothing",
     description: "Fashion deals & drops",
     color: "bg-clothing/10 text-clothing",
-    delay: 0.4 
+    delay: 0.4,
   },
-  { 
-    icon: Plane, 
-    label: "Flights", 
+  {
+    icon: Plane,
+    label: "Flights",
     description: "Best airfare alerts",
     color: "bg-flights/10 text-flights",
-    delay: 0.6 
+    delay: 0.6,
   },
 ];
 
 const features = [
-  { icon: TrendingDown, label: "Price History", description: "Track price trends over time" },
-  { icon: Bell, label: "Smart Alerts", description: "Get notified when prices drop" },
-  { icon: Zap, label: "Instant Updates", description: "Real-time price monitoring" },
+  {
+    icon: TrendingDown,
+    label: "Price History",
+    description: "Track price trends over time",
+  },
+  {
+    icon: Bell,
+    label: "Smart Alerts",
+    description: "Get notified when prices drop",
+  },
+  {
+    icon: Zap,
+    label: "Instant Updates",
+    description: "Real-time price monitoring",
+  },
 ];
 
 export default function Landing() {
@@ -47,22 +67,19 @@ export default function Landing() {
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-glow">
               <span className="text-lg">📊</span>
             </div>
-            <span className="font-semibold text-xl text-foreground">PriceTracker</span>
+            <span className="font-semibold text-xl text-foreground">
+              PriceTracker
+            </span>
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3"
           >
             <Link to="/auth">
-              <Button variant="ghost" size="sm">
+              <Button variant="glass" size="lg">
                 Login
-              </Button>
-            </Link>
-            <Link to="/dashboard">
-              <Button variant="glass" size="sm">
-                Go to Dashboard
               </Button>
             </Link>
           </motion.div>
@@ -90,14 +107,19 @@ export default function Landing() {
               <span className="text-gradient">Buy at the Right Time.</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-              Monitor prices across mobiles, clothing, and flights. Get instant alerts when prices drop to your target.
+              Monitor prices across mobiles, clothing, and flights. Get instant
+              alerts when prices drop to your target.
             </p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{
+              duration: 0.6,
+              delay: 0.2,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link to="/dashboard">
@@ -119,14 +141,24 @@ export default function Landing() {
               key={cat.label}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: cat.delay, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className={`float${i === 1 ? "-delayed" : i === 2 ? "-delayed-2" : ""}`}
+              transition={{
+                duration: 0.6,
+                delay: cat.delay,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+              className={`float${
+                i === 1 ? "-delayed" : i === 2 ? "-delayed-2" : ""
+              }`}
             >
               <div className="glass rounded-3xl p-8 hover-lift cursor-pointer">
-                <div className={`w-14 h-14 rounded-2xl ${cat.color} flex items-center justify-center mb-4`}>
+                <div
+                  className={`w-14 h-14 rounded-2xl ${cat.color} flex items-center justify-center mb-4`}
+                >
                   <cat.icon className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">{cat.label}</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {cat.label}
+                </h3>
                 <p className="text-muted-foreground">{cat.description}</p>
               </div>
             </motion.div>
@@ -164,7 +196,9 @@ export default function Landing() {
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
                 <feature.icon className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">{feature.label}</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-3">
+                {feature.label}
+              </h3>
               <p className="text-muted-foreground">{feature.description}</p>
             </motion.div>
           ))}
@@ -200,9 +234,15 @@ export default function Landing() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>© 2024 PriceTracker. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+            <a href="#" className="hover:text-foreground transition-colors">
+              Privacy
+            </a>
+            <a href="#" className="hover:text-foreground transition-colors">
+              Terms
+            </a>
+            <a href="#" className="hover:text-foreground transition-colors">
+              Contact
+            </a>
           </div>
         </div>
       </footer>
