@@ -15,7 +15,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
-  const { login, loginWithGoogle, signup } = useAuth();
+  const { login, signup } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -39,29 +39,8 @@ export default function Auth() {
           title: isLogin ? "Welcome back!" : "Account created!",
           description: "Redirecting to dashboard...",
         });
-        navigate("/dashboard");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setIsLoading(true);
-    try {
-      const result = await loginWithGoogle();
-      if (result.error) {
-        toast({
-          title: "Error",
-          description: result.error,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Welcome!",
-          description: "Signed in with Google successfully",
-        });
-        navigate("/dashboard");
+        console.log("Navigation triggered", isLogin);
+        navigate(isLogin ? "/dashboard" : "/auth");
       }
     } finally {
       setIsLoading(false);
@@ -203,6 +182,7 @@ export default function Auth() {
               type="submit"
               variant="hero"
               className="w-full h-12 rounded-xl"
+              onClick={handleSubmit}
               disabled={isLoading}
             >
               {isLoading ? (

@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Smartphone,
-  Shirt,
   Plane,
   Bell,
   ChevronLeft,
@@ -30,7 +29,7 @@ interface AppSidebarProps {
 export function AppSidebar({ className }: AppSidebarProps) {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { user, logout } = useAuth();
+  const {  logout } = useAuth();
 
   const allNavItems = user?.isAdmin
     ? [...navItems, { path: "/admin", label: "Admin", icon: Shield }]
@@ -166,3 +165,5 @@ export function AppSidebar({ className }: AppSidebarProps) {
     </motion.aside>
   );
 }
+
+

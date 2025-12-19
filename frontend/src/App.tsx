@@ -14,32 +14,35 @@ import Alerts from "./pages/Alerts";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
+import ProtectedRoute from "./components/ProtectedRoutes";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light" storageKey="pricetracker-theme">
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
-              <Route element={<DashboardLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/mobiles" element={<Mobiles />} />
-                <Route path="/flights" element={<Flights />} />
-                <Route path="/alerts" element={<Alerts />} />
-                <Route path="/admin" element={<Admin />} />
+              <Route element={<ProtectedRoute />}>
+                <Route element={<DashboardLayout />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/mobiles" element={<Mobiles />} />
+                  <Route path="/flights" element={<Flights />} />
+                  <Route path="/alerts" element={<Alerts />} />
+                  <Route path="/admin" element={<Admin />} />
+                </Route>
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );

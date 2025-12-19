@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface User {
   id: string;
@@ -9,122 +16,101 @@ export interface User {
 }
 
 interface AuthContextType {
+  token: string | null;
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ error?: string }>;
-  loginWithGoogle: () => Promise<{ error?: string }>;
-  signup: (email: string, password: string, name: string) => Promise<{ error?: string }>;
+  signup: (
+    email: string,
+    password: string,
+    name: string
+  ) => Promise<{ error?: string }>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users database
-const MOCK_USERS: User[] = [
-  { id: "1", email: "admin@pricetracker.com", name: "Admin User", isAdmin: true },
-  { id: "2", email: "user@example.com", name: "John Doe", isAdmin: false },
-];
-
-// Admin emails list
-const ADMIN_EMAILS = ["admin@pricetracker.com", "admin@example.com"];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for stored session
-    const storedUser = localStorage.getItem("pricetracker-user");
+    const storedUser = localStorage.getItem("x-auth-user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      navigate("/dashboard");
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<{ error?: string }> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<{ error?: string }> => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
-    // Mock validation
-    if (!email || !password) {
-      return { error: "Email and password are required" };
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        return { error: data.error || "Invalid credentials" };
+      }
+      localStorage.setItem("x-auth-token", data.token);
+      const userData = await getMy(data.token);
+      if (userData) {
+        setUser(userData);
+        localStorage.setItem("x-auth-user", JSON.stringify(userData));
+      }
+      return {};
+    } catch (error) {
+      return { error: "Network error. Please try again." };
     }
-
-    if (password.length < 6) {
-      return { error: "Invalid credentials" };
-    }
-
-    // Find or create user
-    let foundUser = MOCK_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase());
-    
-    if (!foundUser) {
-      // Create new user for demo purposes
-      foundUser = {
-        id: Date.now().toString(),
-        email,
-        name: email.split("@")[0],
-        isAdmin: ADMIN_EMAILS.includes(email.toLowerCase()),
-      };
-    }
-
-    setUser(foundUser);
-    localStorage.setItem("pricetracker-user", JSON.stringify(foundUser));
-    return {};
   };
 
-  const loginWithGoogle = async (): Promise<{ error?: string }> => {
-    // Simulate Google OAuth
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  const signup = async (
+    email: string,
+    password: string,
+    name: string
+  ): Promise<{ error?: string }> => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password, name }),
+        }
+      );
 
-    const googleUser: User = {
-      id: "google-" + Date.now(),
-      email: "googleuser@gmail.com",
-      name: "Google User",
-      isAdmin: false,
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=google",
-    };
+      const data = await res.json();
 
-    setUser(googleUser);
-    localStorage.setItem("pricetracker-user", JSON.stringify(googleUser));
-    return {};
-  };
-
-  const signup = async (email: string, password: string, name: string): Promise<{ error?: string }> => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (!email || !password || !name) {
-      return { error: "All fields are required" };
+      if (!res.ok || data.error) {
+        return { error: data.error || "Signup failed" };
+      }
+      return {};
+    } catch (error) {
+      return { error: "Network error. Please try again." };
     }
-
-    if (password.length < 6) {
-      return { error: "Password must be at least 6 characters" };
-    }
-
-    // Check if user exists
-    const existingUser = MOCK_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase());
-    if (existingUser) {
-      return { error: "User already exists. Please login instead." };
-    }
-
-    const newUser: User = {
-      id: Date.now().toString(),
-      email,
-      name,
-      isAdmin: ADMIN_EMAILS.includes(email.toLowerCase()),
-    };
-
-    setUser(newUser);
-    localStorage.setItem("pricetracker-user", JSON.stringify(newUser));
-    return {};
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem("pricetracker-user");
+    localStorage.removeItem("x-auth-token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, loginWithGoogle, signup, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -136,4 +122,25 @@ export function useAuth() {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
+}
+
+async function getMy(token: string) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": token!,
+      },
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      throw new Error(data.error || "Failed to fetch user data");
+    }
+    console.log("Fetched user data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
+  }
 }
