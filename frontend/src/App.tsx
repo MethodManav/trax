@@ -9,7 +9,6 @@ import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Mobiles from "./pages/Mobiles";
-import Clothing from "./pages/Clothing";
 import Flights from "./pages/Flights";
 import Alerts from "./pages/Alerts";
 import Admin from "./pages/Admin";
@@ -32,7 +31,6 @@ const App = () => (
               <Route element={<DashboardLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/mobiles" element={<Mobiles />} />
-                <Route path="/clothing" element={<Clothing />} />
                 <Route path="/flights" element={<Flights />} />
                 <Route path="/alerts" element={<Alerts />} />
                 <Route path="/admin" element={<Admin />} />

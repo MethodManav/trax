@@ -14,7 +14,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  
+
   const { login, loginWithGoogle, signup } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -97,14 +97,16 @@ export default function Auth() {
               <span className="text-xl">📊</span>
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-foreground">PriceTracker</h1>
+              <h1 className="text-xl font-semibold text-foreground">
+                PriceTracker
+              </h1>
               <p className="text-sm text-muted-foreground">
                 {isLogin ? "Welcome back" : "Create your account"}
               </p>
             </div>
           </div>
 
-          {/* Google Login */}
+          {/* Google Login
           <Button
             variant="outline"
             className="w-full mb-6 h-12 rounded-xl"
@@ -130,7 +132,7 @@ export default function Auth() {
               />
             </svg>
             Continue with Google
-          </Button>
+          </Button> */}
 
           {/* Divider */}
           <div className="relative mb-6">
@@ -138,7 +140,9 @@ export default function Auth() {
               <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-glass px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-glass px-2 text-muted-foreground">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -206,8 +210,10 @@ export default function Auth() {
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   {isLogin ? "Signing in..." : "Creating account..."}
                 </>
+              ) : isLogin ? (
+                "Sign In"
               ) : (
-                isLogin ? "Sign In" : "Create Account"
+                "Create Account"
               )}
             </Button>
           </form>
@@ -226,7 +232,13 @@ export default function Auth() {
 
           {/* Demo hint */}
           <div className="mt-6 p-3 rounded-xl bg-muted/50 text-xs text-muted-foreground text-center">
-            <p><strong>Demo:</strong> Use <code className="bg-muted px-1 rounded">admin@pricetracker.com</code> for admin access</p>
+            <p>
+              <strong>Demo:</strong> Use{" "}
+              <code className="bg-muted px-1 rounded">
+                admin@pricetracker.com
+              </code>{" "}
+              for admin access
+            </p>
           </div>
         </div>
       </motion.div>

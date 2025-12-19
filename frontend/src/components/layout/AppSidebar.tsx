@@ -19,7 +19,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { path: "/mobiles", label: "Mobiles", icon: Smartphone },
-  { path: "/clothing", label: "Clothing", icon: Shirt },
   { path: "/flights", label: "Flights", icon: Plane },
   { path: "/alerts", label: "Alerts", icon: Bell },
 ];
@@ -106,16 +105,27 @@ export function AppSidebar({ className }: AppSidebarProps) {
       {/* User & Actions */}
       <div className="p-4 border-t border-glass-border space-y-3">
         {/* Theme toggle */}
-        <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between px-2")}>
-          {!isCollapsed && <span className="text-sm text-muted-foreground">Theme</span>}
+        <div
+          className={cn(
+            "flex items-center",
+            isCollapsed ? "justify-center" : "justify-between px-2"
+          )}
+        >
+          {!isCollapsed && (
+            <span className="text-sm text-muted-foreground">Theme</span>
+          )}
           <ThemeToggle />
         </div>
 
         {/* User info */}
         {user && !isCollapsed && (
           <div className="px-2 py-2 rounded-xl bg-muted/50">
-            <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+            <p className="text-sm font-medium text-foreground truncate">
+              {user.name}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {user.email}
+            </p>
             {user.isAdmin && (
               <span className="inline-flex items-center gap-1 text-xs text-primary mt-1">
                 <Shield className="w-3 h-3" /> Admin

@@ -13,7 +13,8 @@ export default function Dashboard() {
   const { data: alerts, isLoading: alertsLoading } = useAlerts();
   const { data: trackers, isLoading: trackersLoading } = useTrackers();
 
-  const recentAlerts = alerts?.filter(a => a.isNew).slice(0, 3) || [];
+  const recentAlerts = alerts?.filter((a) => a.isNew).slice(0, 2) || [];
+  console.log("recentAlerts", trackers);
   const recentTrackers = trackers?.slice(0, 4) || [];
 
   return (
@@ -50,7 +51,9 @@ export default function Dashboard() {
             <AnimatedGlassCard delay={0.1} hover>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Total Tracked</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Total Tracked
+                  </p>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -69,7 +72,9 @@ export default function Dashboard() {
             <AnimatedGlassCard delay={0.2} hover>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Active Alerts</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Active Alerts
+                  </p>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -88,7 +93,9 @@ export default function Dashboard() {
             <AnimatedGlassCard delay={0.3} hover>
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Biggest Drop</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Total Trigger
+                  </p>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -112,15 +119,17 @@ export default function Dashboard() {
         {/* Recent Alerts */}
         <AnimatedGlassCard delay={0.4}>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-foreground">Recent Alerts</h2>
-            <Link 
-              to="/alerts" 
+            <h2 className="text-lg font-semibold text-foreground">
+              Recent Alerts
+            </h2>
+            <Link
+              to="/alerts"
               className="text-sm text-primary hover:underline flex items-center gap-1"
             >
               View all <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          
+
           {alertsLoading ? (
             <div className="space-y-4">
               <CardSkeleton />
@@ -140,7 +149,9 @@ export default function Dashboard() {
                       {alert.message}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {formatDistanceToNow(alert.timestamp, { addSuffix: true })}
+                      {formatDistanceToNow(alert.timestamp, {
+                        addSuffix: true,
+                      })}
                     </p>
                   </div>
                   {alert.isNew && (
@@ -161,9 +172,11 @@ export default function Dashboard() {
         {/* Recent Trackers */}
         <AnimatedGlassCard delay={0.5}>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-foreground">Recent Trackers</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              Recent Trackers
+            </h2>
           </div>
-          
+
           {trackersLoading ? (
             <div className="space-y-4">
               <CardSkeleton />
@@ -187,9 +200,13 @@ export default function Dashboard() {
                     </p>
                   </div>
                   <div className="w-20">
-                    <MiniChart 
-                      data={tracker.priceHistory.slice(-7)} 
-                      color={categoryConfig[tracker.category].color as "mobile" | "clothing" | "flights"}
+                    <MiniChart
+                      data={tracker.priceHistory.slice(-7)}
+                      color={
+                        categoryConfig[tracker.category].color as
+                          | "mobile"
+                          | "flights"
+                      }
                     />
                   </div>
                 </div>
