@@ -2,10 +2,10 @@ import { z } from "zod";
 import { authService } from "../../services/auth-service/index";
 import { ApiRouteConfig, Handlers } from "motia";
 export const config: ApiRouteConfig = {
-  name: "Login User",
+  name: " User",
   type: "api",
-  path: "/auth/login",
-  method: "POST",
+  path: "/auth/my",
+  method: "GET",
   description: "Login a user",
   emits: [],
   flows: ["auth-management"],
@@ -18,16 +18,13 @@ export const config: ApiRouteConfig = {
 export const handler: Handlers["Login User"] = async (req, { logger }) => {
   try {
     logger.info("Logging in user", { body: req.body });
-    const validatedData = loginUserBodySchema.safeParse(req.body);
-    if (!validatedData.success) {
-      throw new Error("Validation failed");
-    }
-    const user = await authService.loginUser(validatedData.data);
+    // @ts-ignore
+    const { usetId } = req;
+    const user = await authService.getUserById(usetId);
     return {
       status: 200,
       body: {
-        token: user.token,
-        userId: user.userId,
+        user: user,
       },
     };
   } catch (error) {

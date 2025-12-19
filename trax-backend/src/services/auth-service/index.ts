@@ -36,14 +36,23 @@ export const authService = {
     const hashedPassword = await authRepository.hashPassword(data.password);
     const user = await authRepository.createUser({
       email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      mobile: data.mobile,
+      name: data.name,
       password: hashedPassword,
     });
 
     const token = await authRepository.generateToken(user._id);
 
     return { token, userId: user._id.toString() };
+  },
+  async getUserById(userId: string) {
+    const user = await authRepository.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+    };
   },
 };

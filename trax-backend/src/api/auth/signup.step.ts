@@ -45,9 +45,7 @@ export const handler: Handlers["Signup User"] = async (req, { logger }) => {
 
 const signUpUserBodySchema = z.object({
   email: z.string().email(),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  mobile: z.string().min(10).max(10),
+  name: z.string().min(1),
   password: z.string().min(6),
 });
 

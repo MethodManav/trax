@@ -3,7 +3,7 @@ import { triggerRepository } from "../../repositories/triggers-dto";
 export const config: CronConfig = {
   name: "CheckTriggers",
   type: "cron",
-  cron: "*/2 * * * *", // Run every 2 minutes
+  cron: "0 * * * *", // Run every hour
   description: "Check triggers ready for processing and push them to queue",
   emits: ["trigger-ready"],
   flows: ["trigger-management"],

@@ -3,24 +3,7 @@ import { z } from "zod";
 import { triggerService } from "../../services/triggers/index";
 import { ITriggerDoc } from "../../model/trigger.model";
 import { authRepository } from "../../repositories/auth-dto";
-
-//token authentication middleware
-const authenticateToken: ApiMiddleware = async (req, ctx, next) => {
-  const authHeader = req.headers["x-auth-token"];
-  console.log("Auth Header:", authHeader);
-  if (!authHeader || typeof authHeader !== "string") {
-    return { status: 401, body: { message: "No token provided" } };
-  }
-  try {
-    const decoded = await authRepository.verifyToken(authHeader);
-    console.info("Token verified:", decoded);
-    // @ts-ignore
-    req.userId = decoded.userId;
-    return await next();
-  } catch (error) {
-    return { status: 401, body: { message: "Invalid token" } };
-  }
-};
+import { authenticateToken } from "../../middleware/auth.middleware";
 
 const createMobileTriggerBodySchema = z.object({
   eventType: z.literal("mobile"),
@@ -47,10 +30,11 @@ export const config: ApiRouteConfig = {
   description: "Create a new trigger",
   emits: [],
   flows: ["trigger-management"],
-  middleware: [authenticateToken],
+  middleware: [authenticateToken as ApiMiddleware],
   includeFiles: [
     "../../services/triggers/index.ts",
     "../../repositories/triggers/index.ts",
+    "../../middleware/auth.middleware.ts",
   ],
 };
 

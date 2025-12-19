@@ -41,9 +41,7 @@ export const authRepository = {
 
   async createUser(data: {
     email: string;
-    firstName: string;
-    lastName: string;
-    mobile: string;
+    name: string;
     password: string;
   }): Promise<IUserDoc> {
     try {
@@ -52,6 +50,18 @@ export const authRepository = {
       return newUser;
     } catch (error) {
       throw new Error("Error creating user");
+    } finally {
+      await disconnectDatabase();
+    }
+  },
+
+  async findById(userId: string): Promise<IUserDoc | null> {
+    try {
+      await connectDatabase();
+      const user = await User.findById(userId);
+      return user;
+    } catch (error) {
+      throw new Error("Error finding user by ID");
     } finally {
       await disconnectDatabase();
     }
