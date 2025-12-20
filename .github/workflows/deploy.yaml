@@ -17,24 +17,22 @@ on:
         required: true
 
 env:
-  # Add your API Key as a Secret in your Repository (Do NOT add it here)
-  # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets
   MOTIA_API_KEY: ${{ secrets.MOTIA_API_KEY }}
-  # Fill your environment ID here
-  MOTIA_ENV_ID: __FILL YOUR ENVIRONMENT ID HERE__
+  MOTIA_ENV_ID: ${{ secrets.MOTIA_ENV_ID }}
 
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: trax-backend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.release.tag_name || github.ref }}
 
       - name: Set VERSION_NAME and DESCRIPTION
-        id: meta
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "VERSION_NAME=${{ github.event.inputs.versionName }}" >> $GITHUB_ENV
@@ -54,24 +52,23 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: "package-lock.json"
+          cache-dependency-path: trax-backend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
-      # Replace MY_SECRET with your secret
-      # Add as many as you need
-      # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets
       - name: Create Env file
         run: |
           echo "DB_URL=${{ secrets.DB_URL }}" >> .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "MOTIA_API_KEY=${{ secrets.MOTIA_API_KEY }}" >> .env
+          echo "MOTIA_ENV_ID=${{ secrets.MOTIA_ENV_ID }}" >> .env
 
       - name: Deploy using Motia Cloud
         run: |
           npx motia cloud deploy \
-            --api-key ${{ env.MOTIA_API_KEY }} \
-            --environment-id ${{ env.MOTIA_ENV_ID }} \
-            --version-name "${{ env.VERSION_NAME }}" \
-            --version-description "${{ env.VERSION_DESCRIPTION }}" \
+            --api-key "$MOTIA_API_KEY" \
+            --environment-id "$MOTIA_ENV_ID" \
+            --version-name "$VERSION_NAME" \
+            --version-description "$VERSION_DESCRIPTION" \
             --env-file .env
