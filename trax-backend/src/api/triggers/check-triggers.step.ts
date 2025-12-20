@@ -1,6 +1,6 @@
 import type { CronConfig, Handlers } from "motia";
 import { triggerRepository } from "../../repositories/triggers-dto";
-import { pushEvent } from "../../queue/create";
+import { pushEvent } from "../../queue/createQueue";
 export const config: CronConfig = {
   name: "CheckTriggers",
   type: "cron",
