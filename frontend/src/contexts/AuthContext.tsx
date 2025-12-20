@@ -67,10 +67,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("x-auth-token", data.token);
       const userData = await getMy(data.token);
       if (userData) {
-        setUser(userData);
-        localStorage.setItem("x-auth-user", JSON.stringify(userData));
+        setUser(userData.user);
+        localStorage.setItem("x-auth-user", JSON.stringify(userData.user));
+        return {};
       }
-      return {};
+      return { error: "Internal Server Error" };
     } catch (error) {
       return { error: "Network error. Please try again." };
     }
@@ -106,6 +107,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("x-auth-token");
+    localStorage.removeItem("x-auth-user");
+    setUser(null);
   };
 
   return (
@@ -125,18 +128,18 @@ export function useAuth() {
 
 async function getMy(token: string) {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/me`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/my`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         "x-auth-token": token!,
       },
     });
+
     const data = await res.json();
     if (!res.ok || data.error) {
       throw new Error(data.error || "Failed to fetch user data");
     }
-    console.log("Fetched user data:", data);
     return data;
   } catch (error) {
     console.error("Error fetching user data:", error);

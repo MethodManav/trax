@@ -39,7 +39,6 @@ export default function Auth() {
           title: isLogin ? "Welcome back!" : "Account created!",
           description: "Redirecting to dashboard...",
         });
-        console.log("Navigation triggered", isLogin);
         navigate(isLogin ? "/dashboard" : "/auth");
       }
     } finally {

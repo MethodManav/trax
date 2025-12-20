@@ -29,7 +29,8 @@ interface AppSidebarProps {
 export function AppSidebar({ className }: AppSidebarProps) {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const {  logout } = useAuth();
+  const { user } = useAuth();
+  const { logout } = useAuth();
 
   const allNavItems = user?.isAdmin
     ? [...navItems, { path: "/admin", label: "Admin", icon: Shield }]
@@ -165,5 +166,3 @@ export function AppSidebar({ className }: AppSidebarProps) {
     </motion.aside>
   );
 }
-
-

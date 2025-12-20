@@ -14,7 +14,6 @@ export default function Dashboard() {
   const { data: trackers, isLoading: trackersLoading } = useTrackers();
 
   const recentAlerts = alerts?.filter((a) => a.isNew).slice(0, 2) || [];
-  console.log("recentAlerts", trackers);
   const recentTrackers = trackers?.slice(0, 4) || [];
 
   return (
