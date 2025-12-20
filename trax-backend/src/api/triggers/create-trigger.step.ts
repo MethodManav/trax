@@ -9,8 +9,8 @@ const createMobileTriggerBodySchema = z.object({
   config: z.object({
     brandName: z.string().min(1, "Name is required"),
     modelName: z.string().min(1, "Model name is required"),
-    ram: z.number().min(256, "RAM must be at least 256MB"),
-    rom: z.number().min(1024, "ROM must be at least 1GB"),
+    ram: z.string(),
+    rom: z.string(),
   }),
   expectedPrice: z.number().min(0, "Expected price must be non-negative"),
   timeDuration: z.string().min(1, "Track timing is required"),
