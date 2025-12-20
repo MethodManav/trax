@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { PipelineStage, Types } from "mongoose";
 import {
   ITriggerDoc,
   TriggerModel,
@@ -45,5 +45,23 @@ export const triggerRepository = {
     } finally {
       disconnectDatabase();
     }
+  },
+
+  fetchUserDashboardQuery(userId: string): PipelineStage[] {
+    return [
+      {
+        $match: {
+          userId: new Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "alerts",
+          localField: "userId",
+          foreignField: "userId",
+          as: "alerts",
+        },
+      },
+    ];
   },
 };

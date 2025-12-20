@@ -45,7 +45,7 @@ export const authService = {
     return { token, userId: user._id.toString() };
   },
   async getUserById(userId: string) {
-    const user = await authRepository.findById(userId);
+    const user = await authRepository.findByUserId(userId);
     if (!user) {
       throw new Error("User not found");
     }

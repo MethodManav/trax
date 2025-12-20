@@ -1,12 +1,14 @@
 import { z } from "zod";
 import { authService } from "../../services/auth-service/index";
-import { ApiRouteConfig, Handlers } from "motia";
+import { ApiMiddleware, ApiRouteConfig, Handlers } from "motia";
+import { authenticateToken } from "../../middleware/auth.middleware";
 export const config: ApiRouteConfig = {
-  name: " User",
+  name: "User",
   type: "api",
   path: "/auth/my",
   method: "GET",
-  description: "Login a user",
+  description: "Get a user",
+  middleware: [authenticateToken as ApiMiddleware],
   emits: [],
   flows: ["auth-management"],
   includeFiles: [
@@ -15,12 +17,12 @@ export const config: ApiRouteConfig = {
   ],
 };
 
-export const handler: Handlers["Login User"] = async (req, { logger }) => {
+export const handler: Handlers["User"] = async (req, { logger }) => {
   try {
     logger.info("Logging in user", { body: req.body });
     // @ts-ignore
-    const { usetId } = req;
-    const user = await authService.getUserById(usetId);
+    const { userId } = req;
+    const user = await authService.getUserById(userId);
     return {
       status: 200,
       body: {

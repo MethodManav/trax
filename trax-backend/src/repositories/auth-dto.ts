@@ -55,7 +55,7 @@ export const authRepository = {
     }
   },
 
-  async findById(userId: string): Promise<IUserDoc | null> {
+  async findByUserId(userId: string): Promise<IUserDoc | null> {
     try {
       await connectDatabase();
       const user = await User.findById(userId);

@@ -2,7 +2,6 @@ import type { ApiMiddleware, ApiRouteConfig, Handlers } from "motia";
 import { z } from "zod";
 import { triggerService } from "../../services/triggers/index";
 import { ITriggerDoc } from "../../model/trigger.model";
-import { authRepository } from "../../repositories/auth-dto";
 import { authenticateToken } from "../../middleware/auth.middleware";
 
 const createMobileTriggerBodySchema = z.object({
