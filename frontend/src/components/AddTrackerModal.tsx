@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
-import { useAddTracker } from "@/hooks/useTrackers";
 import { Category, categoryConfig } from "@/lib/mockData";
 import { Loader2 } from "lucide-react";
 
@@ -19,32 +17,95 @@ export function AddTrackerModal({
 }: AddTrackerModalProps) {
   const [category, setCategory] = useState<Category>(defaultCategory);
   const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
-  const [currentPrice, setCurrentPrice] = useState("");
+  const [modelName, setModelName] = useState("");
+  const [ram, setRam] = useState("");
+  const [rom, setRom] = useState("");
   const [targetPrice, setTargetPrice] = useState("");
-  const [alertType, setAlertType] = useState<"below" | "percent">("below");
-
-  const addTracker = useAddTracker();
+  const [timeDuration, setTimeDuration] = useState("7d");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setIsLoading(true);
 
-    await addTracker.mutateAsync({
-      category,
-      name,
-      url: category !== "flights" ? url : undefined,
-      route: category === "flights" ? url : undefined,
-      currentPrice: parseFloat(currentPrice),
-      targetPrice: parseFloat(targetPrice),
-      originalPrice: parseFloat(currentPrice),
-    });
+    try {
+      // Only support mobile category for now
+      if (category !== "mobiles") {
+        setError("Only mobile trackers are supported at this time");
+        setIsLoading(false);
+        return;
+      }
 
-    // Reset form
-    setName("");
-    setUrl("");
-    setCurrentPrice("");
-    setTargetPrice("");
-    onClose();
+      const token = localStorage.getItem("x-auth-token");
+      if (!token) {
+        setError("Please login to add a tracker");
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate required fields
+      if (!name.trim()) {
+        setError("Brand name is required");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!modelName.trim()) {
+        setError("Model name is required");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!targetPrice || parseFloat(targetPrice) <= 0) {
+        setError("Target price must be greater than 0");
+        setIsLoading(false);
+        return;
+      }
+
+      // Convert RAM and ROM from string to numbers (MB for RAM, MB for ROM)
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/triggers`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token,
+          },
+          body: JSON.stringify({
+            eventType: "mobile",
+            config: {
+              brandName: name.trim(),
+              modelName: modelName.trim(),
+              ram: ram,
+              rom: rom,
+            },
+            expectedPrice: parseFloat(targetPrice),
+            timeDuration: timeDuration,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create trigger");
+      }
+
+      // Reset form
+      setName("");
+      setModelName("");
+      setRam("");
+      setRom("");
+      setTargetPrice("");
+      setTimeDuration("7d");
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add tracker");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -104,8 +165,8 @@ export function AddTrackerModal({
             </label>
             <input
               type="text"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
               placeholder="e.g., London"
               className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
             />
@@ -119,10 +180,11 @@ export function AddTrackerModal({
             </label>
             <input
               type="text"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
               placeholder="17 Pro Max, Galaxy S23 Ultra, etc."
               className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              required
             />
           </div>
         )}
@@ -135,10 +197,11 @@ export function AddTrackerModal({
             </label>
             <input
               type="text"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              value={ram}
+              onChange={(e) => setRam(e.target.value)}
               placeholder="8GB, 12GB, etc."
               className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              required
             />
           </div>
         )}
@@ -151,47 +214,60 @@ export function AddTrackerModal({
             </label>
             <input
               type="text"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              value={rom}
+              onChange={(e) => setRom(e.target.value)}
               placeholder="128GB, 256GB, etc."
               className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              required
             />
           </div>
         )}
 
-        {/* Prices */}
-        <div>
-          <label className="text-sm font-medium text-foreground mb-2 block">
-            Target Price ($)
-          </label>
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="e.g., 999.99"
-            className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-          />
-        </div>
-
-        {/* Alert Condition */}
-        <div>
-          <label className="text-sm font-medium text-foreground mb-3 block">
-            Alert Condition
-          </label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setAlertType("below")}
-              className={`flex-1 py-3 rounded-xl border-2 transition-all duration-200 text-sm font-medium ${
-                alertType === "below"
-                  ? "border-primary bg-primary/5 text-primary"
-                  : "border-glass-border text-muted-foreground hover:border-primary/50"
-              }`}
-            >
-              Below target price
-            </button>
+        {/* Target Price */}
+        {category === "mobiles" && (
+          <div>
+            <label className="text-sm font-medium text-foreground mb-2 block">
+              Target Price ($)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              value={targetPrice}
+              onChange={(e) => setTargetPrice(e.target.value)}
+              placeholder="e.g., 999.99"
+              className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              required
+            />
           </div>
-        </div>
+        )}
+
+        {/* Time Duration */}
+        {category === "mobiles" && (
+          <div>
+            <label className="text-sm font-medium text-foreground mb-2 block">
+              Track Duration
+            </label>
+            <select
+              value={timeDuration}
+              onChange={(e) => setTimeDuration(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              required
+            >
+              <option value="7d">7 Days</option>
+              <option value="14d">14 Days</option>
+              <option value="30d">30 Days</option>
+              <option value="60d">60 Days</option>
+              <option value="90d">90 Days</option>
+            </select>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+            {error}
+          </div>
+        )}
 
         {/* Submit */}
         <div className="flex gap-3 pt-2">
@@ -207,9 +283,9 @@ export function AddTrackerModal({
             type="submit"
             variant="hero"
             className="flex-1"
-            disabled={addTracker.isPending}
+            disabled={isLoading}
           >
-            {addTracker.isPending ? (
+            {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Adding...

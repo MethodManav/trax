@@ -51,13 +51,13 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
               ease: [0.25, 0.46, 0.45, 0.94] 
             }}
             className={cn(
-              "relative w-full max-w-lg glass-strong rounded-3xl p-6 shadow-lifted",
+              "relative w-full max-w-lg glass-strong rounded-3xl shadow-lifted flex flex-col max-h-[90vh]",
               className
             )}
           >
             {/* Header */}
             {title && (
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
                 <h2 className="text-xl font-semibold text-foreground">{title}</h2>
                 <button
                   onClick={onClose}
@@ -68,8 +68,10 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
               </div>
             )}
             
-            {/* Content */}
-            {children}
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto px-6 pb-6">
+              {children}
+            </div>
           </motion.div>
         </div>
       )}
