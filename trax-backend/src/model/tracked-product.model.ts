@@ -37,7 +37,7 @@ const TrackerProductSchema = new Schema<ITrackedProduct>({
   ],
 });
 
-export const TrackerModel = model<ITrackedProduct>(
+export const TrackProductModel = model<ITrackedProduct>(
   "Tracker",
   TrackerProductSchema
 );

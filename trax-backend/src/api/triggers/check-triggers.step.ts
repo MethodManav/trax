@@ -1,5 +1,6 @@
 import type { CronConfig, Handlers } from "motia";
 import { triggerRepository } from "../../repositories/triggers-dto";
+import { pushEvent } from "../../queue/create";
 export const config: CronConfig = {
   name: "CheckTriggers",
   type: "cron",
@@ -21,22 +22,18 @@ export const handler: Handlers["CheckTriggers"] = async ({ logger, emit }) => {
       return;
     }
     logger.info(`Found ${triggers.length} triggers ready for processing`);
-
-    await Promise.all(
-      triggers.map((trigger) =>
-        emit({
-          topic: "trigger-ready",
-          data: {
-            triggerId: trigger._id.toString(),
-            nextCheck: trigger.nextCheck.toISOString(),
-          },
-        })
-      )
-    );
-
-    logger.info("Completed trigger check cron job", {
-      processedCount: triggers.length,
-    });
+    for (const trigger of triggers) {
+      try {
+        // Push each trigger to the queue for processing
+        await pushEvent({ triggerId: trigger._id });
+        logger.info(`Pushed trigger ${trigger._id} to processing queue`);
+      } catch (err) {
+        logger.error(`Error pushing trigger ${trigger._id} to queue`, {
+          error: err,
+        });
+      }
+    }
+    logger.info("Completed trigger check cron job");
   } catch (error) {
     logger.error("Error in trigger check cron job", { error });
     throw error;
