@@ -31,11 +31,20 @@
     }
   },
   {
+    "id": "system-health",
+    "config": {
+      "src/api/test.step.ts": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  {
     "id": "auth-management",
     "config": {
       "src/api/auth/signup.step.ts": {
-        "x": 0,
-        "y": 0
+        "x": -356,
+        "y": 3
       },
       "src/api/auth/my.step.ts": {
         "x": 21,
@@ -44,15 +53,6 @@
       "src/api/auth/login.step.ts": {
         "x": -430,
         "y": 324
-      }
-    }
-  },
-  {
-    "id": "system-health",
-    "config": {
-      "src/api/test.step.ts": {
-        "x": 0,
-        "y": 0
       }
     }
   }
