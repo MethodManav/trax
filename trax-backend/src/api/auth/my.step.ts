@@ -33,8 +33,8 @@ export const handler: Handlers["User"] = async (req, { logger }) => {
     logger.error("Error logging in user", { error });
     if (error instanceof Error) {
       return {
-        status: 500,
-        body: { error: error.message || "Internal server error" },
+        status: 400,
+        body: { error: error.message },
       };
     }
   }

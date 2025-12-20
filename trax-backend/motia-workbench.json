@@ -16,10 +16,6 @@
   {
     "id": "trigger-management",
     "config": {
-      "src/events/process-trigger.step.ts": {
-        "x": 350,
-        "y": 448
-      },
       "src/api/triggers/dashboard-trigger.step.ts": {
         "x": 63,
         "y": 0
@@ -29,8 +25,25 @@
         "y": 203
       },
       "src/api/triggers/check-triggers.step.ts": {
+        "x": -14,
+        "y": 697
+      }
+    }
+  },
+  {
+    "id": "auth-management",
+    "config": {
+      "src/api/auth/signup.step.ts": {
         "x": 0,
-        "y": 406
+        "y": 0
+      },
+      "src/api/auth/my.step.ts": {
+        "x": 21,
+        "y": 203
+      },
+      "src/api/auth/login.step.ts": {
+        "x": -430,
+        "y": 324
       }
     }
   }
