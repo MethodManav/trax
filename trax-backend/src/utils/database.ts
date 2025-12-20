@@ -6,11 +6,11 @@ export async function connectDatabase(): Promise<void> {
   if (isConnected) {
     return;
   }
-  const mongoUri = EnvParser.DB_URL;  
+  const mongoUri = process.env.DB_URL ?? " ";
   console.log("Connecting to MongoDB at:", mongoUri);
 
   try {
-    await mongoose.connect(mongoUri,{dbName:'trax'});
+    await mongoose.connect(mongoUri, { dbName: "trax" });
     isConnected = true;
     console.log("MongoDB connected successfully");
   } catch (error) {

@@ -13,10 +13,11 @@ declare module 'motia' {
 
   interface Handlers {
     'ProcessTrigger': EventHandler<never, never>
+    'Dashboard  Trigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'CreateTrigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'CheckTriggers': CronHandler<{ topic: 'trigger-ready'; data: never }>
     'Signup User': ApiRouteHandler<Record<string, unknown>, unknown, never>
-    ' User': ApiRouteHandler<Record<string, unknown>, unknown, never>
+    'User': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'Login User': ApiRouteHandler<Record<string, unknown>, unknown, never>
   }
     
