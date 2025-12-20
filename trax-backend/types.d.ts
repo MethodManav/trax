@@ -12,6 +12,7 @@ declare module 'motia' {
   }
 
   interface Handlers {
+    'Test Server': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'Dashboard  Trigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'CreateTrigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'CheckTriggers': CronHandler<never>

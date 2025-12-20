@@ -25,6 +25,7 @@
     "@types/mongoose": "^5.11.96",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.66.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.3",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@motiadev/workbench": "^0.17.9-beta.191",
     "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/react": "^19.1.1",
     "ts-node": "^10.9.2",
