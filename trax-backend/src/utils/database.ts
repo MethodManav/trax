@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import EnvParser from "./CustomEnv";
 
 let isConnected = false;
 export async function connectDatabase(): Promise<void> {
