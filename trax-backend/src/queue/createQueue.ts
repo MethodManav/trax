@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 
-const redis = new Redis({
+export const redis = new Redis({
   username: "default",
   host: process.env.REDIS_HOST,
   port: Number(process.env.REDIS_PORT),
