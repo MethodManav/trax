@@ -26,12 +26,19 @@ export const handler: Handlers["Dashboard  Trigger"] = async (
   try {
     // @ts-ignore
     const allTrigger = await triggerService.getAllUserTriggers(req.user.id);
+    // @ts-ignore
+    const userId = req.user.id;
+    const recentAlerts = await triggerRepository.getRecentNotifications(
+      userId,
+      5
+    );
     return {
       status: 200,
       body: {
         totalTrigger: allTrigger.length,
         activeTrigger: allTrigger.filter((t) => t.isActive).length,
         inactiveTrigger: allTrigger.filter((t) => !t.isActive).length,
+        recentAlerts: recentAlerts,
       },
     };
   } catch (error) {

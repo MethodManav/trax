@@ -13,7 +13,6 @@ const createMobileTriggerBodySchema = z.object({
     rom: z.string(),
   }),
   expectedPrice: z.number().min(0, "Expected price must be non-negative"),
-  timeDuration: z.string().min(1, "Track timing is required"),
 });
 
 export type CreateMobileTriggerBody = z.infer<

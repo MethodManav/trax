@@ -5,6 +5,7 @@ import {
   type ITrigger,
 } from "../model/trigger.model";
 import { connectDatabase, disconnectDatabase } from "../utils/database";
+import { NotificationModel } from "../model/notificayion.model";
 
 export const triggerRepository = {
   async createTriggerData(data: ITrigger): Promise<ITriggerDoc> {
@@ -63,5 +64,22 @@ export const triggerRepository = {
         },
       },
     ];
+  },
+
+  async getRecentNotifications(userId: string, limit: number): Promise<any[]> {
+    try {
+      await connectDatabase();
+      const data = await NotificationModel.find({
+        userId: new Types.ObjectId(userId),
+      })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .exec();
+      return data;
+    } catch (error) {
+      throw new Error("Error fetching recent notifications");
+    } finally {
+      disconnectDatabase();
+    }
   },
 };

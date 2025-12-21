@@ -39,9 +39,6 @@ const TriggerSchema = new Schema<ITrigger>({
     type: Number,
     default: 0,
   },
-  timeDuration: {
-    type: String,
-  },
   nextCheck: {
     type: Date,
     default: new Date(),
