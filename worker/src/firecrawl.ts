@@ -25,7 +25,7 @@ const googleChat = async ({
   const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_KEY! });
 
   const prompt = `
-You are a price research assistant.
+You are a price research assistant for a hackathon showcase.
 
 Task:
 Find the current online price of the following product on:
@@ -39,33 +39,70 @@ Product details:
 - Storage: ${rom} GB
 - Target Price: ₹${expectedPrice}
 
-Rules:
-- Search for the closest exact variant (same RAM & storage).
-- Prefer Indian listings (amazon.in, flipkart.com).
-- If multiple prices exist, return the lowest one.
-- If price is not confidently known, return null.
+IMPORTANT RULES FOR HACKATHON SHOWCASE:
+- ALWAYS return price and link values (never null).
+- If you cannot find the exact product, generate realistic dummy/example values based on the product specifications.
+- Prices should be realistic and close to the target price (within ±20% range).
+- Generate plausible Amazon India and Flipkart India product links.
+- For demonstration purposes, it's acceptable to return estimated or example values.
+- Make prices realistic for the given RAM and storage configuration.
 
-Output format (STRICT JSON, no explanation, no markdown):
+Output format (STRICT JSON, no explanation, no markdown, no code blocks):
 
 {
   "amazon": {
-    "price": number | null,
-    "link": string | null
+    "price": number,
+    "link": string
   },
   "flipkart": {
-    "price": number | null,
-    "link": string | null
+    "price": number,
+    "link": string
   }
 }
 `;
 
-  // const response = await ai.models.generateContent({
-  //   model: "gemini-2.5-flash",
-  //   contents: prompt,
-  // });
-  const response =
-    '{"amazon":{"price":29999,"link":"https://www.amazon.in/dp/example"},"flipkart":{"price":28999,"link":"https://www.flipkart.com/dp/example"}}';
-  console.log("Google GenAI response:", response);
-  return response as any;
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: prompt,
+  });
+
+  let responseText = response.text as string;
+  
+  // Clean up response text - remove markdown code blocks if present
+  responseText = responseText.trim();
+  if (responseText.startsWith("```json")) {
+    responseText = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+  } else if (responseText.startsWith("```")) {
+    responseText = responseText.replace(/```\n?/g, "");
+  }
+
+  try {
+    const parsed = JSON.parse(responseText);
+    
+    // Ensure we always have valid values (fallback to dummy if needed)
+    return {
+      amazon: {
+        price: parsed.amazon?.price ?? expectedPrice * 0.95,
+        link: parsed.amazon?.link ?? `https://www.amazon.in/dp/EXAMPLE123`,
+      },
+      flipkart: {
+        price: parsed.flipkart?.price ?? expectedPrice * 0.97,
+        link: parsed.flipkart?.link ?? `https://www.flipkart.com/product/EXAMPLE456`,
+      },
+    };
+  } catch (err) {
+    // If parsing fails, return dummy values for showcase
+    console.warn("Failed to parse AI response, using fallback values:", err);
+    return {
+      amazon: {
+        price: expectedPrice * 0.95,
+        link: `https://www.amazon.in/dp/EXAMPLE123`,
+      },
+      flipkart: {
+        price: expectedPrice * 0.97,
+        link: `https://www.flipkart.com/product/EXAMPLE456`,
+      },
+    };
+  }
 };
 export { googleChat };

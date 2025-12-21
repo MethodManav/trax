@@ -8,6 +8,7 @@ export interface ITrigger extends Document {
   expectedPrice: number;
   timeDuration: number;
   nextCheck: Date;
+  lastFetchedPrice: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +43,14 @@ const TriggerSchema = new Schema<ITrigger>({
   timeDuration: {
     type: Number,
     default: 0,
+  },
+  lastFetchedPrice: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
   nextCheck: {
     type: Date,

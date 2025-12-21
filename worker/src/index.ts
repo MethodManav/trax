@@ -2,6 +2,7 @@ import Redis from "ioredis";
 import { connectDatabase } from "./database";
 import { TriggerModel } from "./model/trigger.model";
 import { googleChat } from "./firecrawl";
+import { NotificationModel } from "./model/notification.model";
 
 // Handle uncaught exceptions - stop service immediately
 process.on("uncaughtException", (err: Error) => {
@@ -47,6 +48,9 @@ redis.on("connect", () => {
 });
 const QUEUE_NAME = "fifo-events";
 
+// Processing flag to ensure synchronous execution - only one item processed at a time
+let isProcessing = false;
+
 const startWorker = async () => {
   try {
     await connectDatabase();
@@ -58,9 +62,16 @@ const startWorker = async () => {
     process.exit(1);
   }
 
+  // Synchronous processing loop - processes one item at a time, no parallel execution
   while (true) {
+    // Wait if currently processing to ensure strict sequential execution
+    while (isProcessing) {
+      await new Promise((res) => setTimeout(res, 100));
+    }
+
     let data;
     try {
+      // brpop blocks until an item is available - ensures sequential processing
       data = await redis.brpop(QUEUE_NAME, 0);
     } catch (err: any) {
       console.error(
@@ -82,14 +93,18 @@ const startWorker = async () => {
     }
 
     if (data?.[1]) {
+      // Set processing flag to prevent parallel execution
+      isProcessing = true;
       try {
         console.log("Fetched from queue:", queueData);
         const triggerData = await TriggerModel.findById(queueData.triggerId);
         console.log("Processing event:", triggerData);
         if (!triggerData) {
           console.error("Trigger not found:", queueData._id);
+          isProcessing = false;
           continue;
         }
+        // Synchronous execution - await ensures this completes before next iteration
         const fetchPrice = await googleChat(triggerData.config as any);
         console.log("Fetched Price:", fetchPrice);
         //check if fetched price is close to expected price
@@ -99,8 +114,15 @@ const startWorker = async () => {
             triggerData.expectedPrice
           )
         ) {
+          await NotificationModel.create({
+            userId: triggerData.userId,
+            triggerId: triggerData._id,
+            message: `Price alert! The price on Amazon is close to your target of ₹${triggerData.expectedPrice}. Current price: ₹${fetchPrice?.amazon?.price}`,
+            createdAt: new Date(),
+            read: false,
+          });
           console.log(
-            `Trigger ${triggerData._id} met the expected price condition.`
+            `Trigger ${triggerData._id} met the expected price condition. Notification created.`
           );
         }
         if (
@@ -109,12 +131,28 @@ const startWorker = async () => {
             triggerData.expectedPrice
           )
         ) {
+          await NotificationModel.create({
+            userId: triggerData.userId,
+            triggerId: triggerData._id,
+            message: `Price alert! The price on Flipkart is close to your target of ₹${triggerData.expectedPrice}. Current price: ₹${fetchPrice?.flipkart?.price}`,
+            createdAt: new Date(),
+            read: false,
+          });
           console.log(
-            `Trigger ${triggerData._id} met the expected price condition.`
+            `Trigger ${triggerData._id} met the expected price condition. Notification created.`
           );
         }
         // Update trigger with fetched price or any other logic
         triggerData.nextCheck = new Date(Date.now() + 60 * 60 * 1000); // Next check in 1 hour
+        const amazonPrice = fetchPrice?.amazon?.price || Infinity;
+        const flipkartPrice = fetchPrice?.flipkart?.price || Infinity;
+
+        triggerData.lastFetchedPrice =
+          amazonPrice !== undefined &&
+          flipkartPrice !== undefined &&
+          amazonPrice < flipkartPrice
+            ? fetchPrice?.amazon
+            : fetchPrice?.flipkart;
         await triggerData.save();
       } catch (err: any) {
         console.error(
@@ -123,6 +161,9 @@ const startWorker = async () => {
         console.error("Error details:", err);
         console.error("Error stack:", err.stack);
         process.exit(1);
+      } finally {
+        // Always reset processing flag, even on error
+        isProcessing = false;
       }
     } else {
       await new Promise((res) => setTimeout(res, 500));
