@@ -6,7 +6,7 @@ export interface ITrigger extends Document {
   isActive: boolean;
   config: Record<string, unknown>;
   expectedPrice: number;
-  timeDuration: number;
+  timeDuration: string;
   isTracked: boolean;
   nextCheck: Date;
   lastFetchedPrice: Record<string, unknown>;
@@ -42,8 +42,7 @@ const TriggerSchema = new Schema<ITrigger>({
     default: 0,
   },
   timeDuration: {
-    type: Number,
-    default: 0,
+    type: String,
   },
   lastFetchedPrice: {
     type: Schema.Types.Mixed,

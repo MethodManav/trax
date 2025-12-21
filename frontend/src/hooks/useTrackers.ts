@@ -10,37 +10,12 @@ import {
 // Simulated delay for async operations
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Local storage key
-const TRACKERS_KEY = "price-tracker-items";
-const ALERTS_KEY = "price-tracker-alerts";
-
-// Initialize from localStorage or use mock data
+// Initialize mock data
 const getInitialTrackers = (): Tracker[] => {
-  if (typeof window === "undefined") return mockTrackers;
-  const stored = localStorage.getItem(TRACKERS_KEY);
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    return parsed.map((t: Tracker) => ({
-      ...t,
-      lastChecked: new Date(t.lastChecked),
-      createdAt: new Date(t.createdAt),
-    }));
-  }
-  localStorage.setItem(TRACKERS_KEY, JSON.stringify(mockTrackers));
   return mockTrackers;
 };
 
 const getInitialAlerts = (): Alert[] => {
-  if (typeof window === "undefined") return mockAlerts;
-  const stored = localStorage.getItem(ALERTS_KEY);
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    return parsed.map((a: Alert) => ({
-      ...a,
-      timestamp: new Date(a.timestamp),
-    }));
-  }
-  localStorage.setItem(ALERTS_KEY, JSON.stringify(mockAlerts));
   return mockAlerts;
 };
 
@@ -106,10 +81,6 @@ export const useAddTracker = () => {
         })),
       };
 
-      const trackers = getInitialTrackers();
-      const updated = [...trackers, tracker];
-      localStorage.setItem(TRACKERS_KEY, JSON.stringify(updated));
-
       return tracker;
     },
     onSuccess: () => {
@@ -125,9 +96,6 @@ export const useDeleteTracker = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       await delay(400);
-      const trackers = getInitialTrackers();
-      const updated = trackers.filter((t) => t.id !== id);
-      localStorage.setItem(TRACKERS_KEY, JSON.stringify(updated));
       return id;
     },
     onSuccess: () => {
@@ -156,7 +124,6 @@ export const useAlerts = () => {
               "Content-Type": "application/json",
               "x-auth-token": token,
             },
-            // credentials: "include",
           }
         );
 
@@ -169,7 +136,7 @@ export const useAlerts = () => {
 
         // Map backend notifications to frontend Alert format
         if (data.notifications && Array.isArray(data.notifications)) {
-          return data.notifications.map((notification: any) => {
+          return data.notifications.map((notification) => {
             // Try to infer category from message
             let category: Category = "mobiles";
             const message = notification.message?.toLowerCase() || "";
@@ -234,7 +201,6 @@ export const useMarkAlertRead = () => {
             "Content-Type": "application/json",
             "x-auth-token": token,
           },
-          // credentials: "include",
         }
       );
 
@@ -271,7 +237,6 @@ export const useTrackedMobileTriggers = () => {
               "Content-Type": "application/json",
               "x-auth-token": token,
             },
-            // credentials: "include",
           }
         );
 
@@ -285,7 +250,7 @@ export const useTrackedMobileTriggers = () => {
 
         // Map backend triggers to frontend Tracker format
         if (data.triggers && Array.isArray(data.triggers)) {
-          return data.triggers.map((trigger: any) => {
+          return data.triggers.map((trigger) => {
             const config = trigger.config || {};
             const lastFetchedPrice = trigger.lastFetchedPrice || {};
 
@@ -362,7 +327,6 @@ export const useDashboardStats = () => {
             "Content-Type": "application/json",
             "x-auth-token": token,
           },
-          // credentials: "include",
         }
       );
 

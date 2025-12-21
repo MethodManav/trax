@@ -75,7 +75,6 @@ export function AddTrackerModal({
             "Content-Type": "application/json",
             "x-auth-token": token,
           },
-          credentials: "include",
           body: JSON.stringify({
             eventType: "mobile",
             config: {

@@ -1,12 +1,11 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-
 export interface ITrigger extends Document {
   userId: Types.ObjectId;
   eventType: "mobile" | "flight";
   isActive: boolean;
   config: Record<string, unknown>;
   expectedPrice: number;
-  timeDuration: number;
+  timeDuration: string;
   isTracked: boolean;
   nextCheck: Date;
   lastFetchedPrice: Record<string, unknown>;
@@ -42,8 +41,7 @@ const TriggerSchema = new Schema<ITrigger>({
     default: 0,
   },
   timeDuration: {
-    type: Number,
-    default: 0,
+    type: String,
   },
   lastFetchedPrice: {
     type: Schema.Types.Mixed,
@@ -55,9 +53,7 @@ const TriggerSchema = new Schema<ITrigger>({
   },
   nextCheck: {
     type: Date,
-    default: function (this: ITrigger) {
-      return new Date(Date.now() + this.timeDuration);
-    },
+    default: new Date(),
   },
   isTracked: {
     type: Boolean,

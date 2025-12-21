@@ -49,6 +49,29 @@ const QUEUE_NAME = "fifo-events";
 // Processing flag to ensure synchronous execution - only one item processed at a time
 let isProcessing = false;
 
+/**
+ * Cleans the queue by removing all items from it
+ * @returns Promise<number> The number of items that were removed from the queue
+ */
+export async function cleanQueue(): Promise<number> {
+  try {
+    // Get the current length of the queue
+    const queueLength = await redis.llen(QUEUE_NAME);
+
+    // Delete the entire queue
+    await redis.del(QUEUE_NAME);
+
+    console.log(
+      `Queue cleaned: ${queueLength} item(s) removed from queue "${QUEUE_NAME}"`
+    );
+    return queueLength;
+  } catch (err: any) {
+    console.error("ERROR: Failed to clean queue");
+    console.error("Error details:", err);
+    throw err;
+  }
+}
+
 const startWorker = async () => {
   try {
     await connectDatabase();
@@ -181,12 +204,12 @@ const isPriceCloseToTarget = (
   return difference <= 2000; // Check if the difference is within 2000
 };
 
-startWorker().catch((err: any) => {
-  console.error("ERROR: Fatal error in worker. Stopping service immediately.");
-  console.error("Error details:", err);
-  console.error("Error stack:", err.stack);
-  process.exit(1);
-});
+// startWorker().catch((err: any) => {
+//   console.error("ERROR: Fatal error in worker. Stopping service immediately.");
+//   console.error("Error details:", err);
+//   console.error("Error stack:", err.stack);
+//   process.exit(1);
+// });
 
 // const job = {
 //   triggerId: "6946e821bccf93ea5dca45c8",
@@ -200,3 +223,5 @@ startWorker().catch((err: any) => {
 //   .catch((err) => {
 //     console.error("Error pushing job to queue:", err);
 //   });
+
+cleanQueue();

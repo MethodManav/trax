@@ -60,25 +60,27 @@ Output format (STRICT JSON, no explanation, no markdown, no code blocks):
   }
 }
 `;
-
+  console.log("Google");
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
   });
 
   let responseText = response.text as string;
-  
+
   // Clean up response text - remove markdown code blocks if present
   responseText = responseText.trim();
   if (responseText.startsWith("```json")) {
-    responseText = responseText.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+    responseText = responseText
+      .replace(/```json\n?/g, "")
+      .replace(/```\n?/g, "");
   } else if (responseText.startsWith("```")) {
     responseText = responseText.replace(/```\n?/g, "");
   }
 
   try {
     const parsed = JSON.parse(responseText);
-    
+
     // Ensure we always have valid values (fallback to dummy if needed)
     return {
       amazon: {
@@ -87,7 +89,9 @@ Output format (STRICT JSON, no explanation, no markdown, no code blocks):
       },
       flipkart: {
         price: parsed.flipkart?.price ?? expectedPrice * 0.97,
-        link: parsed.flipkart?.link ?? `https://www.flipkart.com/product/EXAMPLE456`,
+        link:
+          parsed.flipkart?.link ??
+          `https://www.flipkart.com/product/EXAMPLE456`,
       },
     };
   } catch (err) {

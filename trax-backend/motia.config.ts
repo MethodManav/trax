@@ -52,32 +52,32 @@ export default defineConfig({
     logsPlugin,
     bullmqPlugin,
   ],
-  app: (app) => {
-    app.use((req, res, next) => {
-      const origin = req.headers.origin;
+  // app: (app) => {
+  //   app.use((req, res, next) => {
+  //     const origin = req.headers.origin;
 
-      if (origin) {
-        res.setHeader("Access-Control-Allow-Origin", origin); // echo the request origin
-        res.setHeader("Vary", "Origin");
-      }
+  //     if (origin) {
+  //       res.setHeader("Access-Control-Allow-Origin", origin); // echo the request origin
+  //       res.setHeader("Vary", "Origin");
+  //     }
 
-      res.setHeader("Access-Control-Allow-Credentials", "true");
+  //     res.setHeader("Access-Control-Allow-Credentials", "true");
 
-      if (req.method === "OPTIONS") {
-        res.setHeader(
-          "Access-Control-Allow-Headers",
-          "Content-Type, Authorization, x-auth-token"
-        );
-        res.setHeader(
-          "Access-Control-Allow-Methods",
-          "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-        );
-        return res.sendStatus(204);
-      }
+  //     if (req.method === "OPTIONS") {
+  //       res.setHeader(
+  //         "Access-Control-Allow-Headers",
+  //         "Content-Type, Authorization, x-auth-token"
+  //       );
+  //       res.setHeader(
+  //         "Access-Control-Allow-Methods",
+  //         "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+  //       );
+  //       return res.sendStatus(204);
+  //     }
 
-      next();
-    });
-  },
+  //     next();
+  //   });
+  // },
 
   redis: getRedisConfig(),
 });
