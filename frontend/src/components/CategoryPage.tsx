@@ -5,16 +5,8 @@ import { Category, categoryConfig } from "@/lib/mockData";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/ui/skeleton-loaders";
-import { MiniChart } from "@/components/ui/mini-chart";
 import { AddTrackerModal } from "@/components/AddTrackerModal";
-import {
-  Plus,
-  TrendingDown,
-  Clock,
-  Trash2,
-  ExternalLink,
-  Filter,
-} from "lucide-react";
+import { Plus, Clock, Filter } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 interface CategoryPageProps {
@@ -23,7 +15,6 @@ interface CategoryPageProps {
 
 export function CategoryPage({ category }: CategoryPageProps) {
   const { data: trackers, isLoading } = useTrackersByCategory(category);
-  const deleteTracker = useDeleteTracker();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [priceFilter, setPriceFilter] = useState<"all" | "dropped" | "waiting">(
     "all"
@@ -36,18 +27,6 @@ export function CategoryPage({ category }: CategoryPageProps) {
       if (priceFilter === "all") return true;
       return t.status === priceFilter;
     }) || [];
-
-  const statusColors = {
-    dropped: "bg-success-light text-success",
-    waiting: "bg-warning-light text-warning",
-    alert: "bg-destructive/10 text-destructive",
-  };
-
-  const statusIcons = {
-    dropped: "⬇️",
-    waiting: "⏳",
-    alert: "🔔",
-  };
 
   return (
     <div className="space-y-8">
@@ -87,7 +66,7 @@ export function CategoryPage({ category }: CategoryPageProps) {
       </div>
 
       {/* Filters */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -112,14 +91,14 @@ export function CategoryPage({ category }: CategoryPageProps) {
                   {filter === "all"
                     ? "All"
                     : filter === "dropped"
-                    ? "⬇️ Dropped"
-                    : "⏳ Waiting"}
+                    ? "Price Dropped"
+                    : "Waiting"}
                 </button>
               ))}
             </div>
           </div>
         </GlassCard>
-      </motion.div>
+      </motion.div> */}
 
       {/* Trackers List */}
       {isLoading ? (
@@ -173,33 +152,6 @@ export function CategoryPage({ category }: CategoryPageProps) {
                         ${tracker.targetPrice}
                       </p>
                     </div>
-                  </div>
-
-                  {/* Chart */}
-                  <div className="w-32">
-                    <MiniChart
-                      data={tracker.priceHistory.slice(-7)}
-                      color={config.color as "mobile" | "clothing" | "flights"}
-                    />
-                  </div>
-
-                  {/* Status & Actions */}
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium ${
-                        statusColors[tracker.status]
-                      }`}
-                    >
-                      {statusIcons[tracker.status]} {tracker.status}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => deleteTracker.mutate(tracker.id)}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
                   </div>
                 </div>
               </GlassCard>

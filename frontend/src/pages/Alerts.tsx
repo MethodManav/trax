@@ -11,8 +11,8 @@ export default function AlertsPage() {
   const { data: alerts, isLoading } = useAlerts();
   const markRead = useMarkAlertRead();
 
-  const newAlerts = alerts?.filter(a => a.isNew) || [];
-  const pastAlerts = alerts?.filter(a => !a.isNew) || [];
+  const newAlerts = alerts?.filter((a) => a.isNew) || [];
+  const pastAlerts = alerts?.filter((a) => !a.isNew) || [];
 
   return (
     <div className="space-y-8">
@@ -56,7 +56,7 @@ export default function AlertsPage() {
                 </span>
                 New Alerts ({newAlerts.length})
               </motion.h2>
-              
+
               <div className="space-y-3">
                 {newAlerts.map((alert, i) => (
                   <motion.div
@@ -77,14 +77,12 @@ export default function AlertsPage() {
                                 {alert.message}
                               </p>
                               <p className="text-sm text-muted-foreground mt-1">
-                                {formatDistanceToNow(alert.timestamp, { addSuffix: true })}
+                                {formatDistanceToNow(alert.timestamp, {
+                                  addSuffix: true,
+                                })}
                               </p>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span className="flex items-center gap-1 text-success font-semibold">
-                                <TrendingDown className="w-4 h-4" />
-                                {alert.priceChange}%
-                              </span>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -116,11 +114,11 @@ export default function AlertsPage() {
               >
                 Past Alerts
               </motion.h2>
-              
+
               <div className="relative">
                 {/* Timeline line */}
                 <div className="absolute left-6 top-0 bottom-0 w-px bg-border" />
-                
+
                 <div className="space-y-6">
                   {pastAlerts.map((alert, i) => (
                     <motion.div
@@ -134,7 +132,7 @@ export default function AlertsPage() {
                       <div className="absolute left-4 w-5 h-5 rounded-full bg-background border-2 border-border flex items-center justify-center">
                         <div className="w-2 h-2 rounded-full bg-muted-foreground" />
                       </div>
-                      
+
                       <GlassCard variant="subtle" className="p-4">
                         <div className="flex items-center gap-3">
                           <span className="text-xl">
@@ -145,12 +143,15 @@ export default function AlertsPage() {
                               {alert.message}
                             </p>
                             <p className="text-xs text-muted-foreground mt-1">
-                              {format(alert.timestamp, "MMM d, yyyy 'at' h:mm a")}
+                              {format(
+                                alert.timestamp,
+                                "MMM d, yyyy 'at' h:mm a"
+                              )}
                             </p>
                           </div>
-                          <span className="text-sm text-success font-medium">
+                          {/* <span className="text-sm text-success font-medium">
                             {alert.priceChange}%
-                          </span>
+                          </span> */}
                         </div>
                       </GlassCard>
                     </motion.div>
