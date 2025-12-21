@@ -3,6 +3,9 @@ import { connectDatabase } from "./database";
 import { TriggerModel } from "./model/trigger.model";
 import { googleChat } from "./firecrawl";
 import { NotificationModel } from "./model/notification.model";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Handle uncaught exceptions - stop service immediately
 process.on("uncaughtException", (err: Error) => {
@@ -24,16 +27,11 @@ process.on("unhandledRejection", (reason: any, promise: Promise<any>) => {
 const redisOptions: any = {
   username: "default",
   port: 19902,
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASSWORD,
 };
 
-if (process.env.REDIS_PASSWORD !== undefined) {
-  redisOptions.password = process.env.REDIS_PASSWORD;
-}
-
-if (process.env.REDIS_HOST !== undefined) {
-  redisOptions.host = process.env.REDIS_HOST;
-}
-
+console.log("Connecting to Redis with options:", redisOptions);
 const redis = new Redis(redisOptions);
 
 // Handle Redis connection errors
