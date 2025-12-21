@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Category, categoryConfig } from "@/lib/mockData";
@@ -15,6 +16,7 @@ export function AddTrackerModal({
   onClose,
   defaultCategory = "mobiles",
 }: AddTrackerModalProps) {
+  const queryClient = useQueryClient();
   const [category, setCategory] = useState<Category>(defaultCategory);
   const [name, setName] = useState("");
   const [modelName, setModelName] = useState("");
@@ -92,6 +94,11 @@ export function AddTrackerModal({
       if (!response.ok) {
         throw new Error(data.message || "Failed to create trigger");
       }
+
+      // Invalidate queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["tracked-mobile-triggers"] });
+      queryClient.invalidateQueries({ queryKey: ["trackers"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
 
       // Reset form
       setName("");

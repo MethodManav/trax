@@ -151,6 +151,7 @@ const startWorker = async () => {
           amazonPrice < flipkartPrice
             ? fetchPrice?.amazon
             : fetchPrice?.flipkart;
+        triggerData.isTracked = true;
         await triggerData.save();
       } catch (err: any) {
         console.error(

@@ -7,6 +7,7 @@ export interface ITrigger extends Document {
   config: Record<string, unknown>;
   expectedPrice: number;
   timeDuration: number;
+  isTracked: boolean;
   nextCheck: Date;
   lastFetchedPrice: Record<string, unknown>;
   createdAt: Date;
@@ -57,6 +58,10 @@ const TriggerSchema = new Schema<ITrigger>({
     default: function (this: ITrigger) {
       return new Date(Date.now() + this.timeDuration);
     },
+  },
+  isTracked: {
+    type: Boolean,
+    default: false,
   },
 });
 
