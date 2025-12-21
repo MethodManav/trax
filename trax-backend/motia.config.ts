@@ -4,7 +4,6 @@ import logsPlugin from "@motiadev/plugin-logs/plugin";
 import observabilityPlugin from "@motiadev/plugin-observability/plugin";
 import statesPlugin from "@motiadev/plugin-states/plugin";
 import bullmqPlugin from "@motiadev/plugin-bullmq/plugin";
-import cors from "cors";
 
 const getRedisConfig = () => {
   const useExternalRedis =
@@ -54,19 +53,31 @@ export default defineConfig({
     bullmqPlugin,
   ],
   app: (app) => {
-    app.set("trust proxy", 1);
+    app.use((req, res, next) => {
+      const origin = req.headers.origin;
 
-    app.use(
-      cors({
-        origin: true,
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "x-auth-token"],
-      })
-    );
+      if (origin) {
+        res.setHeader("Access-Control-Allow-Origin", origin); // echo the request origin
+        res.setHeader("Vary", "Origin");
+      }
 
-    // ✅ Preflight
-    app.options("*", cors());
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+
+      if (req.method === "OPTIONS") {
+        res.setHeader(
+          "Access-Control-Allow-Headers",
+          "Content-Type, Authorization, x-auth-token"
+        );
+        res.setHeader(
+          "Access-Control-Allow-Methods",
+          "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+        );
+        return res.sendStatus(204);
+      }
+
+      next();
+    });
   },
+
   redis: getRedisConfig(),
 });

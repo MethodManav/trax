@@ -13,6 +13,7 @@ declare module 'motia' {
 
   interface Handlers {
     'Test Server': ApiRouteHandler<Record<string, unknown>, unknown, never>
+    'Get Tracked Mobile Triggers': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { success: boolean; triggers: Array<unknown> }> | ApiResponse<500, { error: string }>, never>
     'Delete Trigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'Dashboard  Trigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'CreateTrigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
@@ -22,7 +23,6 @@ declare module 'motia' {
     'Login User': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'Update Notification': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { success: boolean; message: string }> | ApiResponse<404, { error: string }> | ApiResponse<500, { error: string }>, never>
     'Get User Notifications': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { success: boolean; notifications: Array<{ _id: string; userId: string; triggerId: string; message: string; createdAt: string; read: boolean }> }> | ApiResponse<500, { error: string }>, never>
-    'Get Tracked Mobile Triggers': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { success: boolean; triggers: Array<unknown> }> | ApiResponse<500, { error: string }>, never>
   }
     
 }

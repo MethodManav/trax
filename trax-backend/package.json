@@ -26,7 +26,6 @@
     "@types/mongoose": "^5.11.96",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.66.2",
-    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.3",

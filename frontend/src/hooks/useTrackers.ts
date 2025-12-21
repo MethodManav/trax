@@ -156,6 +156,7 @@ export const useAlerts = () => {
               "Content-Type": "application/json",
               "x-auth-token": token,
             },
+            // credentials: "include",
           }
         );
 
@@ -233,6 +234,7 @@ export const useMarkAlertRead = () => {
             "Content-Type": "application/json",
             "x-auth-token": token,
           },
+          // credentials: "include",
         }
       );
 
@@ -269,6 +271,7 @@ export const useTrackedMobileTriggers = () => {
               "Content-Type": "application/json",
               "x-auth-token": token,
             },
+            // credentials: "include",
           }
         );
 
@@ -285,11 +288,13 @@ export const useTrackedMobileTriggers = () => {
           return data.triggers.map((trigger: any) => {
             const config = trigger.config || {};
             const lastFetchedPrice = trigger.lastFetchedPrice || {};
-            
+
             // Extract price information
-            const currentPrice = lastFetchedPrice.price || trigger.expectedPrice || 0;
+            const currentPrice =
+              lastFetchedPrice.price || trigger.expectedPrice || 0;
             const targetPrice = trigger.expectedPrice || 0;
-            const originalPrice = lastFetchedPrice.originalPrice || currentPrice;
+            const originalPrice =
+              lastFetchedPrice.originalPrice || currentPrice;
 
             // Determine status based on price comparison
             let status: "dropped" | "waiting" | "alert" = "waiting";
@@ -304,19 +309,26 @@ export const useTrackedMobileTriggers = () => {
             const modelName = config.modelName || "";
             const ram = config.ram || "";
             const rom = config.rom || "";
-            const name = [brandName, modelName, ram, rom].filter(Boolean).join(" ") || "Mobile Tracker";
+            const name =
+              [brandName, modelName, ram, rom].filter(Boolean).join(" ") ||
+              "Mobile Tracker";
 
             return {
-              id: trigger._id || trigger.id || String(Date.now() + Math.random()),
+              id:
+                trigger._id || trigger.id || String(Date.now() + Math.random()),
               category: "mobiles" as Category,
               name: name,
               currentPrice: currentPrice,
               targetPrice: targetPrice,
               originalPrice: originalPrice,
-              lastChecked: trigger.nextCheck ? new Date(trigger.nextCheck) : new Date(),
+              lastChecked: trigger.nextCheck
+                ? new Date(trigger.nextCheck)
+                : new Date(),
               status: status,
               priceHistory: [], // Can be populated if needed
-              createdAt: trigger.createdAt ? new Date(trigger.createdAt) : new Date(),
+              createdAt: trigger.createdAt
+                ? new Date(trigger.createdAt)
+                : new Date(),
             };
           });
         }
@@ -350,6 +362,7 @@ export const useDashboardStats = () => {
             "Content-Type": "application/json",
             "x-auth-token": token,
           },
+          // credentials: "include",
         }
       );
 

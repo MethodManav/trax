@@ -55,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           headers: {
             "Content-Type": "application/json",
           },
+          // credentials: "include",
           body: JSON.stringify({ email, password }),
         }
       );
@@ -90,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           headers: {
             "Content-Type": "application/json",
           },
+          // credentials: "include",
           body: JSON.stringify({ email, password, name }),
         }
       );
@@ -134,6 +136,7 @@ async function getMy(token: string) {
         "Content-Type": "application/json",
         "x-auth-token": token!,
       },
+      // credentials: "include",
     });
 
     const data = await res.json();
