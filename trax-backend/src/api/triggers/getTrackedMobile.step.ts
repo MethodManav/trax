@@ -52,7 +52,6 @@ export const handler: Handlers["Get Tracked Mobile Triggers"] = async (
     const triggers = await TriggerModel.find({
       userId: new Types.ObjectId(userId),
       eventType: "mobile",
-      isTracked: false,
     })
       .sort({ createdAt: -1 })
       .exec();

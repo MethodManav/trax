@@ -25,41 +25,52 @@ const googleChat = async ({
   const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_KEY! });
 
   const prompt = `
-You are a price research assistant for a hackathon showcase.
+You are a price extraction and normalization assistant.
 
-Task:
-Find the current online price of the following product on:
-1. Amazon India
-2. Flipkart India
+You are given scraped web page content from Amazon India and Flipkart India.
+The content may include multiple products, sponsored listings, old prices, discounts, and irrelevant text.
 
-Product details:
-- Brand: ${brandName}
-- Model: ${modelName}
-- RAM: ${ram} GB
-- Storage: ${rom} GB
-- Target Price: ₹${expectedPrice}
+Your task:
+1. Identify the EXACT product that matches ALL of the following:
+   - Brand: ${brandName}
+   - Model: ${modelName}
+   - RAM: ${ram} GB
+   - Storage: ${rom} GB
 
-IMPORTANT RULES FOR HACKATHON SHOWCASE:
-- ALWAYS return price and link values (never null).
-- If you cannot find the exact product, generate realistic dummy/example values based on the product specifications.
-- Prices should be realistic and close to the target price (within ±20% range).
-- Generate plausible Amazon India and Flipkart India product links.
-- For demonstration purposes, it's acceptable to return estimated or example values.
-- Make prices realistic for the given RAM and storage configuration.
+2. From the matching product ONLY:
+   - Extract the FINAL SELLING PRICE (after discount).
+   - Ignore MRP, crossed prices, exchange offers, EMI prices, and bank offers.
+   - Convert the price to a pure number (no currency symbols, commas, or text).
 
-Output format (STRICT JSON, no explanation, no markdown, no code blocks):
+3. If multiple matching listings exist:
+   - Choose the LOWEST valid price.
+
+4. If the product is NOT FOUND:
+   - Set price to null
+   - Set link to null
+
+Input:
+- Amazon content: {{AMAZON_PAGE_CONTENT}}
+- Flipkart content: {{FLIPKART_PAGE_CONTENT}}
+
+Output format:
+Return STRICT JSON ONLY.
+No explanation.
+No markdown.
+No extra text.
 
 {
   "amazon": {
-    "price": number,
-    "link": string
+    "price": number | null,
+    "link": string | null
   },
   "flipkart": {
-    "price": number,
-    "link": string
+    "price": number | null,
+    "link": string | null
   }
 }
 `;
+
   console.log("Google");
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
@@ -80,6 +91,7 @@ Output format (STRICT JSON, no explanation, no markdown, no code blocks):
 
   try {
     const parsed = JSON.parse(responseText);
+    console.log(parsed, "ghjk");
 
     // Ensure we always have valid values (fallback to dummy if needed)
     return {

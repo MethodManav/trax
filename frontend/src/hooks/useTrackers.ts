@@ -250,13 +250,12 @@ export const useTrackedMobileTriggers = () => {
 
         // Map backend triggers to frontend Tracker format
         if (data.triggers && Array.isArray(data.triggers)) {
-          return data.triggers.map((trigger) => {
+          return data.triggers.map((trigger: any) => {
             const config = trigger.config || {};
             const lastFetchedPrice = trigger.lastFetchedPrice || {};
 
             // Extract price information
-            const currentPrice =
-              lastFetchedPrice.price || trigger.expectedPrice || 0;
+            const currentPrice = lastFetchedPrice.price || 0;
             const targetPrice = trigger.expectedPrice || 0;
             const originalPrice =
               lastFetchedPrice.originalPrice || currentPrice;

@@ -4,6 +4,7 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Category, categoryConfig } from "@/lib/mockData";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface AddTrackerModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function AddTrackerModal({
   const [timeDuration, setTimeDuration] = useState("7d");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +110,7 @@ export function AddTrackerModal({
       setTargetPrice("");
       setTimeDuration("7d");
       onClose();
+      navigate("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add tracker");
     } finally {

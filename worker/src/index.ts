@@ -129,40 +129,49 @@ const startWorker = async () => {
         const fetchPrice = await googleChat(triggerData.config as any);
         console.log("Fetched Price:", fetchPrice);
         //check if fetched price is close to expected price
-        if (
-          isPriceCloseToTarget(
-            fetchPrice?.amazon?.price as number,
-            triggerData.expectedPrice
-          )
-        ) {
-          await NotificationModel.create({
-            userId: triggerData.userId,
-            triggerId: triggerData._id,
-            message: `Price alert! The price on Amazon is close to your target of ₹${triggerData.expectedPrice}. Current price: ₹${fetchPrice?.amazon?.price}`,
-            createdAt: new Date(),
-            read: false,
-          });
-          console.log(
-            `Trigger ${triggerData._id} met the expected price condition. Notification created.`
-          );
-        }
-        if (
-          isPriceCloseToTarget(
-            fetchPrice?.flipkart?.price as number,
-            triggerData.expectedPrice
-          )
-        ) {
-          await NotificationModel.create({
-            userId: triggerData.userId,
-            triggerId: triggerData._id,
-            message: `Price alert! The price on Flipkart is close to your target of ₹${triggerData.expectedPrice}. Current price: ₹${fetchPrice?.flipkart?.price}`,
-            createdAt: new Date(),
-            read: false,
-          });
-          console.log(
-            `Trigger ${triggerData._id} met the expected price condition. Notification created.`
-          );
-        }
+        // if (
+        //   isPriceCloseToTarget(
+        //     fetchPrice?.amazon?.price as number,
+        //     triggerData.expectedPrice
+        //   )
+        // ) {
+        //   await NotificationModel.create({
+        //     userId: triggerData.userId,
+        //     triggerId: triggerData._id,
+        //     message: `Price alert! The price on Amazon is close to your target of ₹${triggerData.expectedPrice}. Current price: ₹${fetchPrice?.amazon?.price}`,
+        //     createdAt: new Date(),
+        //     read: false,
+        //   });
+        //   console.log(
+        //     `Trigger ${triggerData._id} met the expected price condition. Notification created.`
+        //   );
+        // }
+        // if (
+        //   isPriceCloseToTarget(
+        //     fetchPrice?.flipkart?.price as number,
+        //     triggerData.expectedPrice
+        //   )
+        // ) {
+        //   await NotificationModel.create({
+        //     userId: triggerData.userId,
+        //     triggerId: triggerData._id,
+        //     message: `Price alert! The price on Flipkart is close to your target of ₹${triggerData.expectedPrice}. Current price: ₹${fetchPrice?.flipkart?.price}`,
+        //     createdAt: new Date(),
+        //     read: false,
+        //   });
+        //   console.log(
+        //     `Trigger ${triggerData._id} met the expected price condition. Notification created.`
+        //   );
+        // }
+
+        await NotificationModel.create({
+          userId: triggerData.userId,
+          triggerId: triggerData._id,
+          message: `Price alert! The price is close to your target of ₹${triggerData.expectedPrice}.`,
+          createdAt: new Date(),
+          read: false,
+        });
+
         // Update trigger with fetched price or any other logic
         triggerData.nextCheck = new Date(Date.now() + 60 * 60 * 1000); // Next check in 1 hour
         const amazonPrice = fetchPrice?.amazon?.price || Infinity;
@@ -204,24 +213,11 @@ const isPriceCloseToTarget = (
   return difference <= 2000; // Check if the difference is within 2000
 };
 
-// startWorker().catch((err: any) => {
-//   console.error("ERROR: Fatal error in worker. Stopping service immediately.");
-//   console.error("Error details:", err);
-//   console.error("Error stack:", err.stack);
-//   process.exit(1);
-// });
+startWorker().catch((err: any) => {
+  console.error("ERROR: Fatal error in worker. Stopping service immediately.");
+  console.error("Error details:", err);
+  console.error("Error stack:", err.stack);
+  process.exit(1);
+});
 
-// const job = {
-//   triggerId: "6946e821bccf93ea5dca45c8",
-//   userId: "694580b2532794aba079d249",
-// };
-// redis
-//   .rpush(QUEUE_NAME, JSON.stringify(job))
-//   .then(() => {
-//     console.log("Job pushed to queue");
-//   })
-//   .catch((err) => {
-//     console.error("Error pushing job to queue:", err);
-//   });
-
-cleanQueue();
+// cleanQueue();

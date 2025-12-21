@@ -101,7 +101,7 @@ export default function Dashboard() {
                     transition={{ delay: 0.5, type: "spring" }}
                     className="text-4xl font-bold text-success"
                   >
-                    {stats?.biggestDrop}%
+                    {stats?.biggestDrop}
                   </motion.p>
                 </div>
                 <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center">
