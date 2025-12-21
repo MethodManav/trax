@@ -7,7 +7,14 @@ import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/ui/skeleton-loaders";
 import { MiniChart } from "@/components/ui/mini-chart";
 import { AddTrackerModal } from "@/components/AddTrackerModal";
-import { Plus, TrendingDown, Clock, Trash2, ExternalLink, Filter } from "lucide-react";
+import {
+  Plus,
+  TrendingDown,
+  Clock,
+  Trash2,
+  ExternalLink,
+  Filter,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 interface CategoryPageProps {
@@ -18,14 +25,17 @@ export function CategoryPage({ category }: CategoryPageProps) {
   const { data: trackers, isLoading } = useTrackersByCategory(category);
   const deleteTracker = useDeleteTracker();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [priceFilter, setPriceFilter] = useState<"all" | "dropped" | "waiting">("all");
-  
+  const [priceFilter, setPriceFilter] = useState<"all" | "dropped" | "waiting">(
+    "all"
+  );
+
   const config = categoryConfig[category];
-  
-  const filteredTrackers = trackers?.filter(t => {
-    if (priceFilter === "all") return true;
-    return t.status === priceFilter;
-  }) || [];
+
+  const filteredTrackers =
+    trackers?.filter((t) => {
+      if (priceFilter === "all") return true;
+      return t.status === priceFilter;
+    }) || [];
 
   const statusColors = {
     dropped: "bg-success-light text-success",
@@ -50,7 +60,9 @@ export function CategoryPage({ category }: CategoryPageProps) {
             className="flex items-center gap-3 mb-2"
           >
             <span className="text-3xl">{config.icon}</span>
-            <h1 className="text-3xl font-bold text-foreground">{config.label}</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              {config.label}
+            </h1>
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
@@ -61,7 +73,7 @@ export function CategoryPage({ category }: CategoryPageProps) {
             {filteredTrackers.length} items being tracked
           </motion.p>
         </div>
-        
+
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -97,7 +109,11 @@ export function CategoryPage({ category }: CategoryPageProps) {
                       : "bg-background/50 text-muted-foreground hover:bg-background"
                   }`}
                 >
-                  {filter === "all" ? "All" : filter === "dropped" ? "⬇️ Dropped" : "⏳ Waiting"}
+                  {filter === "all"
+                    ? "All"
+                    : filter === "dropped"
+                    ? "⬇️ Dropped"
+                    : "⏳ Waiting"}
                 </button>
               ))}
             </div>
@@ -134,19 +150,10 @@ export function CategoryPage({ category }: CategoryPageProps) {
                         <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            {formatDistanceToNow(tracker.lastChecked, { addSuffix: true })}
+                            {formatDistanceToNow(tracker.lastChecked, {
+                              addSuffix: true,
+                            })}
                           </span>
-                          {tracker.url && (
-                            <a 
-                              href={tracker.url} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1 hover:text-primary transition-colors"
-                            >
-                              <ExternalLink className="w-3 h-3" />
-                              View
-                            </a>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -170,15 +177,19 @@ export function CategoryPage({ category }: CategoryPageProps) {
 
                   {/* Chart */}
                   <div className="w-32">
-                    <MiniChart 
-                      data={tracker.priceHistory.slice(-7)} 
+                    <MiniChart
+                      data={tracker.priceHistory.slice(-7)}
                       color={config.color as "mobile" | "clothing" | "flights"}
                     />
                   </div>
 
                   {/* Status & Actions */}
                   <div className="flex items-center gap-3">
-                    <span className={`px-3 py-1.5 rounded-full text-xs font-medium ${statusColors[tracker.status]}`}>
+                    <span
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                        statusColors[tracker.status]
+                      }`}
+                    >
                       {statusIcons[tracker.status]} {tracker.status}
                     </span>
                     <Button

@@ -51,7 +51,7 @@ export default function Dashboard() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">
-                    Total Tracked
+                    Total Active Trackers
                   </p>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.5 }}
@@ -72,7 +72,7 @@ export default function Dashboard() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">
-                    Active Alerts
+                    InActive Trigger
                   </p>
                   <motion.p
                     initial={{ opacity: 0, scale: 0.5 }}
@@ -164,56 +164,6 @@ export default function Dashboard() {
           ) : (
             <p className="text-center text-muted-foreground py-8">
               No recent alerts
-            </p>
-          )}
-        </AnimatedGlassCard>
-
-        {/* Recent Trackers */}
-        <AnimatedGlassCard delay={0.5}>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-foreground">
-              Recent Trackers
-            </h2>
-          </div>
-
-          {trackersLoading ? (
-            <div className="space-y-4">
-              <CardSkeleton />
-            </div>
-          ) : recentTrackers.length > 0 ? (
-            <div className="space-y-4">
-              {recentTrackers.map((tracker) => (
-                <div
-                  key={tracker.id}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-background/50 hover:bg-background/80 transition-colors"
-                >
-                  <div className="text-2xl">
-                    {categoryConfig[tracker.category].icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {tracker.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      ${tracker.currentPrice}
-                    </p>
-                  </div>
-                  <div className="w-20">
-                    <MiniChart
-                      data={tracker.priceHistory.slice(-7)}
-                      color={
-                        categoryConfig[tracker.category].color as
-                          | "mobile"
-                          | "flights"
-                      }
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted-foreground py-8">
-              No trackers yet
             </p>
           )}
         </AnimatedGlassCard>

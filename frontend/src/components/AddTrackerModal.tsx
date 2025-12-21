@@ -241,27 +241,6 @@ export function AddTrackerModal({
           </div>
         )}
 
-        {/* Time Duration */}
-        {category === "mobiles" && (
-          <div>
-            <label className="text-sm font-medium text-foreground mb-2 block">
-              Track Duration
-            </label>
-            <select
-              value={timeDuration}
-              onChange={(e) => setTimeDuration(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-              required
-            >
-              <option value="7d">7 Days</option>
-              <option value="14d">14 Days</option>
-              <option value="30d">30 Days</option>
-              <option value="60d">60 Days</option>
-              <option value="90d">90 Days</option>
-            </select>
-          </div>
-        )}
-
         {/* Error Message */}
         {error && (
           <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm">
