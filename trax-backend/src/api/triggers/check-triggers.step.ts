@@ -4,7 +4,7 @@ import { pushEvent } from "../../queue/createQueue";
 export const config: CronConfig = {
   name: "CheckTriggers",
   type: "cron",
-  cron: "0 * * * *", // Run every hour
+  cron: "0/5 * * * *", // Run every 5 minutes
   description: "Check triggers ready for processing and push them to queue",
   emits: ["trigger-ready"],
   flows: ["trigger-management"],
