@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { mockTrackers, mockAlerts, Tracker, Alert, Category } from '@/lib/mockData';
-import { useState, useEffect } from 'react';
 
 // Simulated delay for async operations
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -129,8 +128,50 @@ export const useAlerts = () => {
   return useQuery({
     queryKey: ['alerts'],
     queryFn: async () => {
-      await delay(400);
-      return getInitialAlerts();
+      const token = localStorage.getItem('x-auth-token');
+      if (!token) {
+        // Return empty array if not authenticated
+        return [];
+      }
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/dashboard/triggers`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-auth-token': token,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          // Fallback to mock data if API fails
+          return getInitialAlerts();
+        }
+
+        const data = await response.json();
+        
+        // Map backend recentAlerts to frontend Alert format
+        if (data.recentAlerts && Array.isArray(data.recentAlerts)) {
+          return data.recentAlerts.map((alert: any) => ({
+            id: alert.id || alert._id || String(Date.now() + Math.random()),
+            trackerId: alert.triggerId || alert.trackerId || '',
+            category: alert.category || 'mobiles' as Category,
+            message: alert.message || alert.text || 'Price alert',
+            priceChange: alert.priceChange || alert.priceDrop || 0,
+            timestamp: alert.timestamp ? new Date(alert.timestamp) : new Date(),
+            isNew: alert.isNew !== undefined ? alert.isNew : alert.isRead === false,
+          }));
+        }
+        
+        return [];
+      } catch (error) {
+        console.error('Error fetching alerts:', error);
+        // Fallback to mock data on error
+        return getInitialAlerts();
+      }
     },
   });
 };
@@ -158,24 +199,33 @@ export const useDashboardStats = () => {
   return useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      await delay(600);
-      const trackers = getInitialTrackers();
-      const alerts = getInitialAlerts();
-      
-      const totalTracked = trackers.length;
-      const activeAlerts = alerts.filter(a => a.isNew).length;
-      
-      // Find biggest price drop
-      let biggestDrop = 0;
-      trackers.forEach(t => {
-        const drop = ((t.originalPrice - t.currentPrice) / t.originalPrice) * 100;
-        if (drop > biggestDrop) biggestDrop = drop;
-      });
+      const token = localStorage.getItem('x-auth-token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/dashboard/triggers`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch dashboard stats');
+      }
+
+      const data = await response.json();
       
       return {
-        totalTracked,
-        activeAlerts,
-        biggestDrop: Math.round(biggestDrop),
+        totalTracked: data.totalTrigger || 0,
+        activeAlerts: data.inactiveTrigger || 0,
+        biggestDrop: data.totalTrigger || 0,
       };
     },
   });

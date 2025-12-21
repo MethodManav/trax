@@ -25,9 +25,9 @@ export const handler: Handlers["Dashboard  Trigger"] = async (
 ) => {
   try {
     // @ts-ignore
-    const allTrigger = await triggerService.getAllUserTriggers(req.user.id);
+    const allTrigger = await triggerService.getAllUserTriggers(req.userId);
     // @ts-ignore
-    const userId = req.user.id;
+    const userId = req.userId;
     const recentAlerts = await triggerRepository.getRecentNotifications(
       userId,
       5
@@ -42,7 +42,7 @@ export const handler: Handlers["Dashboard  Trigger"] = async (
       },
     };
   } catch (error) {
-    logger.error("Error creating trigger", { error });
+    logger.error("Error dashboard trigger", { error });
     if (error instanceof Error) {
       return {
         status: 400,

@@ -13,12 +13,14 @@ declare module 'motia' {
 
   interface Handlers {
     'Test Server': ApiRouteHandler<Record<string, unknown>, unknown, never>
+    'Delete Trigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'Dashboard  Trigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'CreateTrigger': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'CheckTriggers': CronHandler<never>
     'Signup User': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'User': ApiRouteHandler<Record<string, unknown>, unknown, never>
     'Login User': ApiRouteHandler<Record<string, unknown>, unknown, never>
+    'Update Notification': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { success: boolean; message: string }> | ApiResponse<404, { error: string }> | ApiResponse<500, { error: string }>, never>
   }
     
 }
