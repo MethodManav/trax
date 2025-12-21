@@ -25,17 +25,13 @@ export const handler: Handlers["Dashboard  Trigger"] = async (
 ) => {
   try {
     // @ts-ignore
-    const query = triggerRepository.fetchUserDashboardQuery(req.userId);
-    const allTriggers = await triggerService.aggregate(query);
-    logger.info("Fetched dashboard triggers successfully");
-    const alerts = allTriggers.filter((alert) => alert.alerts);
+    const allTrigger = await triggerService.getAllUserTriggers(req.user.id);
     return {
       status: 200,
       body: {
-        activeTriggers: allTriggers.filter((trigger) => trigger.isActive)
-          .length,
-        totalTriggers: allTriggers.length,
-        alert: alerts.filter((a) => a.isReaded == true).length,
+        totalTrigger: allTrigger.length,
+        activeTrigger: allTrigger.filter((t) => t.isActive).length,
+        inactiveTrigger: allTrigger.filter((t) => !t.isActive).length,
       },
     };
   } catch (error) {
